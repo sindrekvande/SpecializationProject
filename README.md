@@ -1,6 +1,7 @@
 # SpecializationProject
 
-File structure:
+Sugested file structure:
+```
 SpecializationProject/
 ├── Modules/
 │   ├── ADC.py
@@ -13,3 +14,4 @@ SpecializationProject/
 ├── main.py
 ├── .gitignore
 └── README.md
+```
