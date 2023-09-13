@@ -2,7 +2,7 @@ import pinOut
 import RPi.GPIO as GPIO
 
 class LED:
-    freq = 1000
+    freq = 1000 # measured as 870Hz, shouldn't affect the behaviour
     duty = 0
 
     def __init__(self):
