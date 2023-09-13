@@ -12,7 +12,7 @@ class LED:
         self.pwm = GPIO.PWM(pinOut.LED_DRV_DIM,self.freq)
         self.pwm.start(self.duty)
 
-    def set_brightness_percent(self, percent):
+    def set_brightness_percent(self, percent): # 50 = 50, 25 = 28, 75 = 73
         if percent >= 0 and percent <= 100:
             self.pwm.ChangeDutyCycle(percent)
             self.duty = percent
