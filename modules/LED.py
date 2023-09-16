@@ -32,4 +32,5 @@ class LED:
         set_brightness_percent(convert_watt_to_percent(watt))
 
     def get_values_from_file(file):
-        brightness_df = pd.read_csv(file, sep='\t')
+        brightness_df = pd.read_csv(file, sep='\t', usecols = ['Gg_pyr'], header=0, index_col=False, dtype = float)
+        return brightness_df
