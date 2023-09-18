@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
             time.sleep(1)
 
-    except (KeyboardInterupt):
+    except (KeyboardInterrupt):
         print('\n', "Exit on Ctrl-C")
 
     except:

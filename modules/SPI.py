@@ -27,7 +27,7 @@ class SPI:
     #    self.spi.close()
     #    return ret
 
-    def adc_transaction(self, adc_channel, payload = [0x00, 0x00]):
+    def adc_transaction(self, adc_channel, payload = [0x00, 0x00]): #payload = [0x00]
         """
         Read SPI data from ADC, 8 channels
         """
@@ -36,11 +36,15 @@ class SPI:
 
         bytes_received = self.spi.xfer2(payload) #TESTVERDIER BRUKES NÅ
 
+        #Possible solution: Receives 1 byte
+        #read_data = bytes_received[0]
+        #read_data = read_data & 0b00111000
+
         MSB_1 = bytes_received[1]
         MSB_1 = MSB_1 >> 1
 
         MSB_0 = bytes_received[0] & 0b00011111
-        MSB_0 MSB_0 << 7
+        MSB_0 = MSB_0 << 7
 
         return MSB_0 + MSB_1
 
