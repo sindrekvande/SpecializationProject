@@ -7,9 +7,10 @@ relative_path = ".."
 full_path = os.path.join(absolute_path, relative_path)
 sys.path.insert(0, full_path)
 
-import LED
+from LED import LED
+file = "/home/pi/Desktop/SpecializationProject/datasets/tng00001_2020-09.tsv"
 
-LED = LED.LED()
+LED = LED(file)
 
 def test1(LED):
     while True:
@@ -28,4 +29,8 @@ def test2(LED):
     while True:
         time.sleep(1)
 
-test2(LED)
+def test3(LED):
+    for key, value in LED.brightness_df.items():
+        LED.set_brightness(value)
+
+test3(LED)
