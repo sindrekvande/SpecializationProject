@@ -13,13 +13,18 @@ class SoCperformance:
             await client.pair()
             await client.connect()
             if client.is_connected():
-                print('Bluetooth LE device connected')
+                print('BLE device connected')
             else:
                 print('No connection established')
-                return
+
+    async def readBLE():
+        async with BleakClient(MAC) as client:            
             for service in client.services:
-                print("[Service] {0}: {1}".format(service.uuid, service.description))
+                print("{0} : {1}".format(service.uuid, service.description))
                 for char in service.characteristics:
                     if 'read' in char.properties:
                         data = await client.read_gatt_char(service.uuid)
-            
+                        print(data)
+    
+    def storePerfData(self, file, data):
+        pass # Write data to file
