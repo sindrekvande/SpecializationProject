@@ -1,7 +1,9 @@
 import pinOut
 import RPi.GPIO as GPIO
 import pandas as pd
-
+import menu
+from tests import import_path
+import parameters as pm
 
 class LED:
     freq = 1000 # measured as 870Hz, shouldn't affect the behaviour
@@ -33,18 +35,21 @@ class LED:
         self.set_brightness_percent(self.convert_watt_to_percent(watt))
 
     def get_values_from_file(self, file):
-        self.brightness_df = pd.read_csv(file, sep='\t', usecols = ['Gg_pyr'],  dtype = float) # header=0, index_col=False,
+        self.brightness_df = pd.read_csv(file, sep='\t', usecols = [pm.column],  dtype = float) # header=0, index_col=False,
         return self.brightness_df
 
     def __str__(self):
         self.brightness_df
 
     def singe_value(self, index):
-        return self.brightness_df.iat[index, 'Gg_pyr']
+        return self.brightness_df.iat[index, pm.column]
 
+    # Filtering is not a good idea when we wnat to simulate multiple days, and not just the induvidual values
+    '''
     def filter_values(self):
         prevValue = 9999.9 # Can be an arbitrary value diffrent from 0, I think
         for key, value in led_control.brightness_df.items():
             if value == prevValue:
                 filtered_df = df.drop(key, axis='index')
         self.brightness_df = filtered_df
+    '''
