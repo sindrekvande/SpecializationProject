@@ -26,4 +26,4 @@ class menu:
             file.close()
     
     def read_from_file(self):
-        return pd.read_csv(self.inputFile, sep='\t', usecols = [pm.column],  dtype = float) # header=0, index_col=False,
+        return pd.read_csv(self.inputFile, sep='\t', usecols = [pm.column],  dtype = float, nrows = (pm.numberOfDays*60*24)) # header=0, index_col=False,
