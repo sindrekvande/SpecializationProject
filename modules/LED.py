@@ -41,7 +41,7 @@ class LED:
     def __str__(self):
         self.brightness_df
 
-    def singe_value(self, index):
+    def single_value(self, index):
         return self.brightness_df.iat[index, pm.column]
 
     def filter_NaN_values(self):
