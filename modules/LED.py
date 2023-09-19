@@ -42,8 +42,9 @@ class LED:
     def singe_value(self, index):
         return self.brightness_df.iat[index, 'Gg_pyr']
 
-    def filterValues(self):
-
+    def filter_values(self):
+        prevValue = 9999.9 # Can be an arbitrary value diffrent from 0, I think
         for key, value in led_control.brightness_df.items():
             if value == prevValue:
-                pass # Remove element
+                filtered_df = df.drop(key, axis='index')
+        self.brightness_df = filtered_df

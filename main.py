@@ -4,6 +4,7 @@ import sys
 from modules.ADC import ADC # Ikke sikker på om dette fungerer som jeg tror
 from modules.DAC import DAC
 from modules.LED import LED
+from modules.menu import menu
 from modules.pinOut import pinOut
 from modules.SoCperformance import SoCperformance 
 from modules.SPI import SPI
@@ -12,25 +13,10 @@ from modules.SPI import SPI
 perf = SoCperformance()
 
 # Menu?
-inputFilePath = "/home/pi/Desktop/SpecializationProject/datasets/"
-outputFilePath = "/home/pi/Desktop/SpecializationProject/measurements/"
-
-inputFileDefault = 'tng00001_2020-09'
-outputFileDefault = 'tng00001_2020-09_measurments'
-
-if len(sys.argv) >= 2:
-    inputFile = inputFilePath + sys.argv[0] + '.tsv'
-    outputFile = outputFilePath + sys.argv[1] + '.tsv'
-elif len(sys.argv) >= 1:
-    inputFile = inputFilePath + sys.argv[0] + '.tsv'
-    outputFile = outputFilePath + sys.argv[0] + '_measurments.tsv'
-else:
-    inputFile = inputFilePath + inputFileDefault + '.tsv'
-    outputFile = outputFilePath + outputFileDefault + '.tsv'
-
+start_menu = menu(sys.args)
 
 # Initialize LED
-led_control = LED(file)
+led_control = LED(star_menu.inputFile)
 
 # Initialize ADC
 
@@ -38,10 +24,11 @@ led_control = LED(file)
 
 # Loop: Simulate light, measure values, track performance of SoC, save to file
 for key, value in led_control.brightness_df.items():
+    outputValues = []
     # Set brighness on led from file value
     led_control.set_brightness(value)
 
-    # Let values settle
+    # Let led brightness, voltages and currents settle
     time.sleep(0.01)
 
     # Measure ADC values
@@ -49,6 +36,7 @@ for key, value in led_control.brightness_df.items():
     # Get number of packages from SoC
     
     # Save to file
+    start_menu.append_to_file(outputValues)
 
 
 
