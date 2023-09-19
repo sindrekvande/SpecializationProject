@@ -26,7 +26,7 @@ led_control = LED(star_menu.inputFile)
 # Loop: Simulate light, measure values, track performance of SoC, save to file
 for key, irrValue in led_control.brightness_df.items():
     outputValues = []
-    nextValue = led_control.singe_value(key + 1)
+    nextValue = led_control.single_value(key + 1)
     if pm.rampUp == True:
         for i in range(0,pm.rampUpStep, 1):
             led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
