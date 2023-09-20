@@ -17,7 +17,7 @@ perf = SoCperformance()
 start_menu = menu(sys.args)
 
 # Initialize LED
-led_control = LED(star_menu.inputFile)
+led_control = LED(start_menu.inputFile)
 
 # Initialize ADC
 
