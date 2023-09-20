@@ -1,6 +1,7 @@
 import time
 import sys
 import os
+import pandas as pd
 
 absolute_path = os.path.dirname(__file__)
 relative_path = ".."
@@ -32,5 +33,14 @@ def test2(LED):
 def test3(LED):
     for key, value in LED.brightness_df.items():
         LED.set_brightness(value)
+
+def test4(LED):
+    LED.filter_NaN_values(file)
+    for key, value in LED.brightness_df.itertuples():
+        if pd.isna(value):
+            print("ERROR: NaN detected in file")
+            return -1
+    
+    print("NaN filtered")
 
 test3(LED)

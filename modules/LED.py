@@ -44,8 +44,41 @@ class LED:
     def single_value(self, index):
         return self.brightness_df.iat[index, pm.column]
 
-    def filter_NaN_values(self):
-        for key, value in led_control.brightness_df.items():
-            irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep
-            if pd.isna(value):
-                filtered_df = 
+    def filter_NaN_values(self, file):
+        NaNCounter = 0
+
+        self.get_values_from_file(file)
+
+        for key, value in self.brightness_df.itertuples():   
+            if pd.isna(value) and NaNCounter == 0:
+                print("NaN occurance")
+                previousValue = self.single_value(key - 1)
+                #Check if next values are NaN
+                for nextValueIndex in range(1, len(self.brightness_df) - key):
+                        NaNCounter += 1
+                        nextValue = self.single_value(key + nextValueIndex)
+                        if pd.notna(nextValue):
+                            break
+        
+            if NaNCounter > 0:
+                self.brightness_df.loc[key, pm.column] = (previousValue + nextValue)/2
+                NaNCounter -= 1
+                print("Changing value")
+        
+        return self.brightness_df
+    
+    def brightness_interpolation(self):
+        fadeDuration = 2.0
+
+        for key, value in self.brightness_df.itertuples():
+            currentBrightness = 0
+            stepSize = (value - currentBrightness)/pm.rampUpStep
+
+            for _ in range(pm.rampUpStep):
+                currentBrightness += stepSize
+                self.set_brightness(currentBrightness)
+                self.time.sleep(fadeDuration/pm.rampUpStep)
+        
+        self.set_brightness(value)
+
+        #time.sleep(0.5)?
