@@ -42,7 +42,7 @@ class LED:
         self.brightness_df
 
     def single_value(self, index):
-        return self.brightness_df.iat[index, pm.column]
+        return self.brightness_df.loc[index, pm.column]
 
     def filter_NaN_values(self, file):
         NaNCounter = 0
