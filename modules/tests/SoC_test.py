@@ -1,21 +1,17 @@
 import time
 import asyncio
 from bleak import *
+import os
+import sys
+
 import import_path
 from SoCperformance import SoCperformance
 import parameters as pm
-
+'''
 async def test():
-    client = BleakClient(pm.SoCMAC)
-    #print('defined')
-    #await client.connect()
-    #print('connected')
-    paired = await client.pair(protection_level=2)
-    #print('paired')
     async with BleakClient(pm.SoCMAC) as client:
-        #await client.pair(protection_level=1)
-        soc = SoCperformance(client)
-        soc.readBLE()
+        if client.is_connected:
+            print('connected')
         
         
         #for service in client.services:
@@ -26,3 +22,15 @@ async def test():
             
 
 asyncio.run(test())
+'''
+async def test2():
+    async with SoCperformance() as soc:
+        print('Disconnecting in: 3...')
+        time.sleep(1)
+        print('2...')
+        time.sleep(1)
+        print('1...')
+        time.sleep(1)
+        print('done')
+
+asyncio.run(test2())

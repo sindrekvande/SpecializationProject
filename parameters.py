@@ -6,4 +6,6 @@ rampUp = True # interpolate and ramp up the value inbetween the values from the 
 rampUpStep = 60 # how many interpolated values
 numberOfDays = 4 # number of days to simulate over, from the data set
 column = 'Gg_pyr'
-SoCMAC = 'E0:21:78:85:2A:FB'
+#SoCMAC = '45:D5:34:90:B8:26' #Nordic: 'E0:21:78:85:2A:FB'
+SoCname = 'SoC BLE'
+SoCservice = '180d'

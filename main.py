@@ -10,41 +10,42 @@ from modules.SoCperformance import SoCperformance
 from modules.SPI import SPI
 import parameters as pm
 
-# Make bluetooth connection
-perf = SoCperformance()
+async def main():
+    async with SoCperformance as soc:
+        # Menu?
+        start_menu = menu(sys.args)
 
-# Menu?
-start_menu = menu(sys.args)
+        # Initialize LED
+        led_control = LED(start_menu.inputFile)
 
-# Initialize LED
-led_control = LED(start_menu.inputFile)
+        # Initialize ADC
 
-# Initialize ADC
+        # Initialize DAC
 
-# Initialize DAC
+        # Loop: Simulate light, measure values, track performance of SoC, save to file
+        for key, irrValue in led_control.brightness_df.items():
+            outputValues = []
+            nextValue = led_control.single_value(key + 1)
+            if pm.rampUp == True:
+                for i in range(0,pm.rampUpStep, 1):
+                    led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
+                    time.sleep(pm.timeStep/(pm.rampUpStep*60))
+            else:
+                # Set brighness on led from file value
+                led_control.set_brightness(irrValue)
 
-# Loop: Simulate light, measure values, track performance of SoC, save to file
-for key, irrValue in led_control.brightness_df.items():
-    outputValues = []
-    nextValue = led_control.single_value(key + 1)
-    if pm.rampUp == True:
-        for i in range(0,pm.rampUpStep, 1):
-            led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
-            time.sleep(pm.timeStep/(pm.rampUpStep*60))
-    else:
-        # Set brighness on led from file value
-        led_control.set_brightness(irrValue)
+                # Let led brightness, voltages and currents settle
+                time.sleep(pm.timeStep/60)
 
-        # Let led brightness, voltages and currents settle
-        time.sleep(pm.timeStep/60)
-
-    # Measure ADC values
-    
-    # Get number of packages from SoC
-    
-    # Save to file
-    start_menu.append_to_file(outputValues)
-
+            # Measure ADC values
+            
+            # Get number of packages from SoC
+            
+            # Save to file
+            start_menu.append_to_file(outputValues)
 
 
-# End
+
+        # End
+
+asyncio.run(main())
