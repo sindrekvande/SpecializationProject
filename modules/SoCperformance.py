@@ -25,7 +25,7 @@ class SoCperformance:
         self.perfomance = 0
         #self.client = client
         #asyncio.run(self.scan())
-    
+    '''
     async def connectBLE(self):
         #self.client = BleakClient(pm.SoCMAC)
         #await client.pair()
@@ -37,7 +37,7 @@ class SoCperformance:
             else:
                 print('No connection established')
         #return self.client
-    
+    '''
     async def find_service(self):
         #async with BleakClient(self.device) as client:
         for service in self.client.services:

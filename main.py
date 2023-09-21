@@ -13,7 +13,7 @@ import parameters as pm
 async def main():
     async with SoCperformance as soc:
         # Menu?
-        start_menu = menu(sys.args)
+        start_menu = menu()
 
         # Initialize LED
         led_control = LED(start_menu.inputFile)
