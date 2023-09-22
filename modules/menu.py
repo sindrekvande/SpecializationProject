@@ -1,7 +1,8 @@
 import csv
 import pandas as pd
-from tests import import_path
+import import_main
 import parameters as pm
+from datetime import datetime
 
 inputFilePath = "/home/pi/Desktop/SpecializationProject/datasets/"
 outputFilePath = "/home/pi/Desktop/SpecializationProject/measurements/"
@@ -11,18 +12,22 @@ headers = ['time','irradiance', 'led_percent', 'SoCpacks', 'adc1.1', 'adc1.2', '
 class menu:
     def __init__(self):
         self.inputFile = inputFilePath + pm.season + '.tsv'
-        self.outputFile = outputFilePath + pm.season + '_measurements' + '.tsv'
+
+        currentDatetime = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+        strCurrentDatetime = str(currentDatetime)
+
+        self.outputFile = outputFilePath + pm.season + '_measurements_' + strCurrentDatetime + '.tsv'
         
         self.create_output_file()
         
     def create_output_file(self):
-        file = open(self.outputFile, w)
+        file = open(self.outputFile, "w")
         file.close()
         self.append_to_file(headers)
 
     def append_to_file(self, list):
-        with open(self.outputFile, a) as file: # df.to_csv(self.outputFile, mode='a', index=False, header=False)
-            csv.writer(file, delimiter='\t').writerow(item) 
+        with open(self.outputFile, "a") as file: # df.to_csv(self.outputFile, mode='a', index=False, header=False)
+            csv.writer(file, delimiter='\t').writerow(list) 
             file.close()
     
     def read_from_file(self):

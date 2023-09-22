@@ -1,6 +1,6 @@
 import time
 import spidev
-import import_path
+import import_modules
 import SPI
 
 if __name__ == '__main__':
