@@ -2,7 +2,7 @@ import pinOut
 import RPi.GPIO as GPIO
 import pandas as pd
 import menu
-from tests import import_path
+import import_main
 import parameters as pm
 
 class LED:

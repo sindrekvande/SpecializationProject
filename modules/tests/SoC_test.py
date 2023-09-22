@@ -4,7 +4,7 @@ from bleak import *
 import os
 import sys
 
-import import_path
+import import_modules
 from SoCperformance import SoCperformance
 import parameters as pm
 '''
