@@ -27,7 +27,7 @@ def test2(LED):
         time.sleep(1)
 
 def test3(LED):
-    for key, value in LED.brightnessDF.items():
+    for key, value in LED.brightnessDF.itertuples():
         LED.set_brightness(value)
 
 def test4(LED):
