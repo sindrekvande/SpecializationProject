@@ -1,13 +1,8 @@
 from bleak import *
 import asyncio
-
 import os
 import sys
-
-absolute_path = os.path.dirname(__file__)
-relative_path = ".."
-full_path = os.path.join(absolute_path, relative_path)
-sys.path.insert(0, full_path)
+import import_main
 import parameters as pm
 
 class SoCperformance:
@@ -25,21 +20,7 @@ class SoCperformance:
 
     def __init__(self):
         self.perfomance = 0
-        #self.client = client
-        #asyncio.run(self.scan())
-    '''
-    async def connectBLE(self):
-        #self.client = BleakClient(pm.SoCMAC)
-        #await client.pair()
-        ##await self.client.connect()
-        #await self.client.start_notify('57a70000-9350-11ed-a1eb-0242ac120002', self.callback)
-        async with BleakClient(pm.SoCMAC) as client:
-            if client.is_connected:
-                print('BLE device connected')
-            else:
-                print('No connection established')
-        #return self.client
-    '''
+    
     async def find_service(self):
         #async with BleakClient(self.device) as client:
         for service in self.client.services:

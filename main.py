@@ -4,7 +4,7 @@ import sys
 from modules.ADC import ADC # Ikke sikker på om dette fungerer som jeg tror
 from modules.DAC import DAC
 from modules.LED import LED
-from modules.menu import menu
+from modules.file_handler import file_handler
 from modules.pinOut import pinOut
 from modules.SoCperformance import SoCperformance 
 from modules.SPI import SPI
@@ -13,10 +13,10 @@ import parameters as pm
 async def main():
     async with SoCperformance as soc:
         # Menu?
-        start_menu = menu()
+        file_handler = file_handler()
 
         # Initialize LED
-        led_control = LED(start_menu.inputFile)
+        led_control = LED(file_handler.inputFile)
 
         # Initialize ADC
 
@@ -42,7 +42,7 @@ async def main():
             # Get number of packages from SoC
             
             # Save to file
-            start_menu.append_to_file(outputValues)
+            file_handler.append_to_file(outputValues)
 
 
 

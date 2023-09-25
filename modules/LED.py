@@ -1,7 +1,6 @@
 import pinOut
 import RPi.GPIO as GPIO
 import pandas as pd
-import menu
 import import_main
 import parameters as pm
 
@@ -35,38 +34,38 @@ class LED:
         self.set_brightness_percent(self.convert_watt_to_percent(watt))
 
     def get_values_from_file(self, file):
-        self.brightness_df = pd.read_csv(file, sep='\t', usecols = [pm.column],  dtype = float, nrows = (pm.numberOfDays*60*24)) # header=0, index_col=False, 
-        return self.brightness_df
+        self.brightnessDF = pd.read_csv(file, sep='\t', usecols = [pm.column],  dtype = float, nrows = (pm.numberOfDays*60*24)) # header=0, index_col=False, 
+        return self.brightnessDF
 
     def __str__(self):
-        self.brightness_df
+        self.brightnessDF
 
     def single_value(self, index):
-        return self.brightness_df.loc[index, pm.column]
+        return self.brightnessDF.loc[index, pm.column]
 
     def filter_NaN_values(self, file):
         NaNCounter = 0
         self.get_values_from_file(file)
 
-        for key, irrvalue in self.brightness_df.itertuples():   
+        for key, irrvalue in self.brightnessDF.itertuples():   
             if pd.isna(irrvalue) and NaNCounter == 0:
                 previousValue = self.single_value(key - 1)
                 #Check if next values are NaN
-                for nextValueIndex in range(1, len(self.brightness_df) - key):
+                for nextValueIndex in range(1, len(self.brightnessDF) - key):
                         NaNCounter += 1
                         nextValue = self.single_value(key + nextValueIndex)
                         if pd.notna(nextValue):
                             break
             if NaNCounter > 0:
-                self.brightness_df.loc[key, pm.column] = (previousValue + nextValue)/2
+                self.brightnessDF.loc[key, pm.column] = (previousValue + nextValue)/2
                 NaNCounter -= 1
                     
-        return self.brightness_df
+        return self.brightnessDF
     
     def brightness_interpolation(self):
         fadeDuration = 2.0
 
-        for key, irrValue in self.brightness_df.itertuples():
+        for key, irrValue in self.brightnessDF.itertuples():
             currentBrightness = 0
             stepSize = (irrValue - currentBrightness)/pm.rampUpStep
 

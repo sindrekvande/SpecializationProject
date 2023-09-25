@@ -1,7 +1,7 @@
 import os
 import sys
 
-absolute_path = os.path.dirname(__file__)
-relative_path = ".."
-full_path = os.path.join(absolute_path, relative_path)
-sys.path.insert(0, full_path)
+absolutePath = os.path.dirname(__file__)
+relativePath = ".."
+fullPath = os.path.join(absolutePath, relativePath)
+sys.path.insert(0, fullPath)
