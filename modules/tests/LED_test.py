@@ -5,7 +5,7 @@ import pandas as pd
 import import_modules
 from LED import LED
 
-file = "/home/pi/Desktop/SpecializationProject/datasets/tng00001_2020-09.tsv"
+file = "/home/pi/Desktop/SpecializationProject/datasets/autumn.tsv"
 
 LED = LED(file)
 
