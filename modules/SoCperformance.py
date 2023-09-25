@@ -16,6 +16,8 @@ class SoCperformance:
         await self.scan()
         self.client = BleakClient(self.device)
         await self.client.connect()
+        paired = await self.client.pair(protection_level=2)
+        print(f"Paired: {paired}")
         await self.find_service()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
