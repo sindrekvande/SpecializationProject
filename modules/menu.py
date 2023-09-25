@@ -13,7 +13,7 @@ class menu:
     def __init__(self):
         self.inputFile = inputFilePath + pm.season + '.tsv'
 
-        currentDatetime = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+        currentDatetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         strCurrentDatetime = str(currentDatetime)
 
         self.outputFile = outputFilePath + pm.season + '_measurements_' + strCurrentDatetime + '.tsv'
