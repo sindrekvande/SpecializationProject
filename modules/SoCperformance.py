@@ -10,10 +10,13 @@ class SoCperformance:
     async def __aenter__(self):
         await self.scan()
         self.client = BleakClient(self.device)
-        await self.client.connect()
-        paired = await self.client.pair(protection_level=2)
-        print(f"Paired: {paired}")
-        await self.find_service()
+        try:
+            await self.client.connect()
+            paired = await self.client.pair(protection_level=2)
+            print(f"Paired: {paired}")
+            await self.find_service()
+        except:
+            print('Delete paired device on Pi, and/or erase+flash nRF')
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.client.disconnect()
@@ -24,11 +27,11 @@ class SoCperformance:
     async def find_service(self):
         #async with BleakClient(self.device) as client:
         for service in self.client.services:
-            #print("{0} : {1}".format(service.uuid, service.description))
-            if pm.SoCservice in service.uuid[:8]:
-                print('Service {0} found'.format(pm.SoCservice)) # Use this to fint the correct service
+            print("{0} : {1}".format(service.uuid, service.description))
+            if True:# pm.SoCservice in service.uuid[:8]:
+                #print('Service {0} found'.format(pm.SoCservice)) # Use this to fint the correct service
                 for char in service.characteristics:
-                    #print(char.properties)
+                    print(char.properties)
                     if 'read' in char.properties:
                         try:
                             value = await self.client.read_gatt_char(char.uuid)
@@ -37,6 +40,18 @@ class SoCperformance:
                             print(value[0])
                         except:
                             print('could not read')
+                            '''
+                    if 'notify' in char.properties:
+                        try:
+                            await self.client.start_notify(char.uuid, self.callback)
+                            print('Push button')
+                            await asyncio.sleep(5.0)
+                            await self.client.stop_notify(args.characteristic)
+                        except:
+                            print('could not start notify')
+                            '''
+
+
 
     async def scan(self):
         dev = await BleakScanner.discover()

@@ -25,7 +25,12 @@ asyncio.run(test())
 '''
 async def test2():
     async with SoCperformance() as soc:
-        print('Disconnecting in: 3...')
+        print('Disconnecting in:')
+        print('5...')
+        time.sleep(1)
+        print('4...')
+        time.sleep(1)
+        print('3...')
         time.sleep(1)
         print('2...')
         time.sleep(1)
