@@ -23,7 +23,7 @@ async def main():
         # Initialize DAC
 
         # Loop: Simulate light, measure values, track performance of SoC, save to file
-        for key, irrValue in led_control.brightness_df.items():
+        for key, irrValue in led_control.brightnessDF.itertuples():
             outputValues = []
             nextValue = led_control.single_value(key + 1)
             if pm.rampUp == True:
