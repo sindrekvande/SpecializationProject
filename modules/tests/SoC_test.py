@@ -3,6 +3,7 @@ import asyncio
 from bleak import *
 import os
 import sys
+#from bluepy.btle import *
 
 import import_modules
 from SoCperformance import SoCperformance
@@ -37,5 +38,12 @@ async def test2():
         print('1...')
         time.sleep(1)
         print('done')
+'''
+def test3():
+    peripheral = Peripheral('E0:21:78:85:2A:FB', 'random')
+    peripheral.connect()
+    peripheral.pair()
 
+test3()
+'''
 asyncio.run(test2())

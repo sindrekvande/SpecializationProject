@@ -1,18 +1,25 @@
 from bleak import *
 import asyncio
-import os
-import sys
+import os, sys, pexpect, time
 import import_main
 import parameters as pm
 
 class SoCperformance:
-    device = ''
+    device = '' #E0:21:78:85:2A:FB
     async def __aenter__(self):
         await self.scan()
+        '''
+        if self.device == '':
+            self.__aenter__()
+        else:
+            self.pairDevice()
+        '''
         self.client = BleakClient(self.device)
+        
         try:
             await self.client.connect()
-            paired = await self.client.pair(protection_level=2)
+            print(self.client.is_connected)
+            paired = await self.client.pair(protection_level=4)
             print(f"Paired: {paired}")
             await self.find_service()
         except:
@@ -40,18 +47,18 @@ class SoCperformance:
                             print(value[0])
                         except:
                             print('could not read')
-                            '''
-                    if 'notify' in char.properties:
+                            
+                    if ('notify' or 'indicate') in char.properties:
                         try:
                             await self.client.start_notify(char.uuid, self.callback)
-                            print('Push button')
+                            print('Waiting for change')
                             await asyncio.sleep(5.0)
-                            await self.client.stop_notify(args.characteristic)
+                            await self.client.stop_notify(char.uuid)
                         except:
                             print('could not start notify')
-                            '''
-
-
+    
+    def callback(self, sender: BleakGATTCharacteristic, data: bytearray):
+        print(f"{sender}: {data[0]}")
 
     async def scan(self):
         dev = await BleakScanner.discover()
@@ -62,9 +69,36 @@ class SoCperformance:
                 print('Device called {0} found with MAC {1}'.format(pm.SoCname,self.device))
         if self.device == '':
             print('Device by the name of {0} could not be found'.format(pm.SoCname))
-    '''
-    def callback(self, sender: BleakGATTCharacteristic, data: bytearray):
-        print(f"{sender}: {data}")
-    '''
-    def storePerfData(self, file, data):
-        pass # Write data to file
+
+    def pairDevice(self):
+        response=''
+        p = pexpect.spawn('bluetoothctl', encoding='utf-8')
+        p.logfile_read = sys.stdout
+        p.expect('#')
+        p.sendline("remove "+self.device)
+        p.expect("#")
+        p.sendline("scan on")
+
+        mylist = ["Discovery started","Failed to start discovery","Device "+self.device+" not available","Failed to connect","Connection successful", "Changing "+self.device+" trust succeeded"]
+        while response != "Changing "+self.device+" trust succeeded":
+            p.expect(mylist)
+            time.sleep(1)
+            response=p.after
+            p.sendline("pair "+self.device)
+            #time.sleep(4)
+            #p.expect("[agent] Confirm passkey .* (yes/no):")
+            p.expect("Request confirmation")
+            time.sleep(5)
+            p.sendline("yes")
+            p.waitnoecho()
+            p.expect("Pairing successful")
+            p.expect("#")
+            p.sendline("trust "+self.device)
+            #time.sleep(1)
+            p.expect(mylist)
+            time.sleep(1)
+            response=p.after
+        p.sendline("quit")
+        p.close()
+        #time.sleep(1)
+        return
