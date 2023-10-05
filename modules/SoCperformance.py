@@ -19,7 +19,7 @@ class SoCperformance:
         try:
             await self.client.connect()
             print(self.client.is_connected)
-            paired = await self.client.pair(protection_level=4)
+            paired = await self.client.pair(protection_level=2)
             print(f"Paired: {paired}")
             await self.find_service()
             await self.client.disconnect()

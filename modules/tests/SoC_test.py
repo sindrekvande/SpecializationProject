@@ -49,4 +49,13 @@ def test3():
 
 test3()
 '''
+async def test4():
+    await asyncio.sleep(2.0)
+    print("Inside test4()_________________________")
+
+async def main():
+    task2 = asyncio.create_task(test2())
+    task4 = asyncio.create_task(test4())
+    await asyncio.wait([task2, task4])
+
 asyncio.run(test2())
