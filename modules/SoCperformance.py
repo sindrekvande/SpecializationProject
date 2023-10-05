@@ -22,6 +22,9 @@ class SoCperformance:
             paired = await self.client.pair(protection_level=4)
             print(f"Paired: {paired}")
             await self.find_service()
+            await self.client.disconnect()
+
+            await self.waitForDevice()
         except:
             print('Delete paired device on Pi, and/or erase+flash nRF')
 
@@ -42,7 +45,6 @@ class SoCperformance:
                     if 'read' in char.properties:
                         try:
                             value = await self.client.read_gatt_char(char.uuid)
-                            self.serviceChar = char.uuid
                             self.perfomance = value[0]
                             print(value[0])
                         except:
@@ -51,6 +53,7 @@ class SoCperformance:
                     if ('notify' or 'indicate') in char.properties:
                         try:
                             await self.client.start_notify(char.uuid, self.callback)
+                            if pm.SoCservice in service.uuid[0:8]: self.serviceChar = char.uuid
                             print('Waiting for change')
                             await asyncio.sleep(5.0)
                             await self.client.stop_notify(char.uuid)
@@ -69,6 +72,26 @@ class SoCperformance:
                 print('Device called {0} found with MAC {1}'.format(pm.SoCname,self.device))
         if self.device == '':
             print('Device by the name of {0} could not be found'.format(pm.SoCname))
+
+    async def waitForDevice(self):
+        while 1:
+            disconnected_event = asyncio.Event()
+            def disconnected_callback(client):
+                print("Disconnected event")
+                disconnected_event.set()
+            try:
+                async with BleakClient(self.device, disconnected_callback=disconnected_callback) as client:
+                    print("Starting notify")
+                    await client.start_notify(self.serviceChar, self.callback)
+                    #await asyncio.sleep(5.0)
+                    #await self.client.stop_notify(self.serviceChar)
+                    #await self.client.disconnect()
+                    print("Waiting for disconnect")
+                    await disconnected_event.wait()
+                    print("Disconnected")
+            except:
+                await asyncio.sleep(2.0)
+
 
     def pairDevice(self):
         response=''

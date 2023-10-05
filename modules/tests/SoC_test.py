@@ -3,6 +3,7 @@ import asyncio
 from bleak import *
 import os
 import sys
+from threading import *
 #from bluepy.btle import *
 
 import import_modules
@@ -26,6 +27,8 @@ asyncio.run(test())
 '''
 async def test2():
     async with SoCperformance() as soc:
+        #soc.waitForDevice()
+        
         print('Disconnecting in:')
         print('5...')
         time.sleep(1)
