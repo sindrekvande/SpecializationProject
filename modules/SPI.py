@@ -1,59 +1,68 @@
-import pinOut
 import spidev
 import RPi.GPIO as GPIO
+import pinOut
+import time
 
 class SPI:
-    def __init__(self, spiBus = 0, cePin = 0):
-        """
-        Initializes the device, takes SPI bus address (0 on newer Raspberry models)
-        Sets the channel to either CE= = 0 (GPIO 8) or CE1 = 1 (GPIO 7)
-        """
 
-        if spiBus not in [0,1]:
-            raise ValueError('wrong SPI-bus: {0} setting (use 0 or 1)!'.format(spiBus))
+    NUM_CHANNELS = 8
+    REGISTER_ADDRESS = 0x010
+    WRITE_VALUE = 0x10
 
-        if cePin not in [0,1]:
-            raise ValueError('wrong CE-setting: {0} setting (use 0 for CE0 or 1 for CE1)!'.format(cePin))
+    def __init__(self, spiBus=0, spiDevice=0):
+        self.setup_spi(spiBus, spiDevice)
+        self.setup_gpio()
+        self.reset_adc()
+        GPIO.add_event_detect(pinOut.ADC1_DRDY, GPIO.FALLING, callback=self.data_ready_callback)
 
+    def setup_spi(self, spiBus, spiDevice):
+        """Setup SPI parameters."""
         self.spi = spidev.SpiDev()
-        self.spi.open(spiBus, cePin)
-        self.spi.max_speed_hz = 976000 #Default = 125000000 (too high?)
+        self.spi.open(spiBus, spiDevice)
+        self.spi.max_speed_hz = 1950
+        self.spi.mode = 0
 
-        pass
+    def setup_gpio(self):
+        """Setup GPIO pins."""
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(pinOut.ADC12_RESET, GPIO.OUT)
+        GPIO.setup(pinOut.ADC1_DRDY, GPIO.IN)
 
-    #def trans(self, payload = 0x00):
-    #    self.spi.open(bus, device)
-    #    ret = self.spi.xfer(payload)
-    #    self.spi.close()
-    #    return ret
+    def reset_adc(self):
+        """Reset the ADC."""
+        GPIO.output(pinOut.ADC12_RESET, GPIO.LOW)
+        time.sleep(0.01)
+        GPIO.output(pinOut.ADC12_RESET, GPIO.HIGH)
 
-    def adc_transaction(self, adcChannel, payload = [0x00, 0x00]): #payload = [0x00]
-        """
-        Read SPI data from ADC, 8 channels
-        """
-        if adcChannel > 7 or adcChannel < 0:
-            return -1
+    def data_ready_callback(self, channel):
+        """Handle data ready interrupt."""
+        data = self.read_adc_register()
+        print("ADC Data Callback: ", data)
 
-        bytes_received = self.spi.xfer2(payload) #TESTVERDIER BRUKES NÅ
+    def read_adc_register(self):
+        """Read data from ADC register."""
+        cmd = (1 << 7) | self.REGISTER_ADDRESS
+        resp = self.spi.xfer2([cmd, self.REGISTER_ADDRESS])
+        if len(resp) < 2:
+            print("Incomplete data received from ADC!")
+            return None
+        return bin(resp[1])
+        
+    def write_adc_register(self):
+        """Write data to ADC register and verify."""
+        cmd = [self.REGISTER_ADDRESS, self.WRITE_VALUE]
+        self.spi.xfer2(cmd)
 
-        #Possible solution: Receives 1 byte
-        #read_data = bytes_received[0]
-        #read_data = read_data & 0b00111000
-
-        MSB_1 = bytes_received[1]
-        MSB_1 = MSB_1 >> 1
-
-        MSB_0 = bytes_received[0] & 0b00011111
-        MSB_0 = MSB_0 << 7
-
-        return MSB_0 + MSB_1
-
-    def convert_to_voltage(self, adcOutput, vref=3.3):
-        """
-        Converts analouge voltage from digital output (0-4095)
-        Vref could be adhusted (standard 3V3 rail Rpi)
-        """
-        return adcOutput * (vref / (2 ** 12 - 1))
+        # Verification
+        readValue = self.read_adc_register()
+        if readValue != self.WRITE_VALUE:
+            print(f"Write mismatch! Expected {self.WRITE_VALUE} but got {readValue} at address {self.REGISTER_ADDRESS}.")
 
     def close_spi(self):
+        """Cleanup function."""
         self.spi.close()
+        GPIO.cleanup()
+    
+    def fetch_adc_data(self):
+        """Fetch data for all ADC channels."""
+        return [self.read_adc_register() for _ in range(self.NUM_CHANNELS)]

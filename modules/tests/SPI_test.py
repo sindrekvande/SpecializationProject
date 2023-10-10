@@ -4,20 +4,17 @@ import import_modules
 import SPI
 
 if __name__ == '__main__':
-    SPI = SPI.SPI()
+    spi = SPI.SPI()
+    
+    #adc.write_adc_register()
+    #print(f"Read value from REGISTER_ADDRESS: {adc.read_adc_register()}")
 
+    #print(adc.fetch_adc_data())
+    
     try:
         while True:
-            adc_output = SPI.adc_transaction(0)
-            adc_voltage = SPI.convert_to_voltage(adc_output)
-            print("ADC output: %d" % adc_output)
-            print("ADC voltage: %0.2f V \n" % adc_voltage)
-
-            time.sleep(1)
-
-    except (KeyboardInterrupt):
-        print('\n', "Exit on Ctrl-C")
-
-    except:
-        print("Other error or exception")
-        raise
+            pass  # Infinite loop to keep script running and process callbacks
+    
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        spi.close_spi()
