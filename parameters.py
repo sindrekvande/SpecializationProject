@@ -9,3 +9,4 @@ column = 'Gg_pyr'
 #SoCMAC = '45:D5:34:90:B8:26' #Nordic: 'E0:21:78:85:2A:FB'
 SoCname = 'SoC BLE'
 SoCservice = '180d'
+btInterval = 2.0

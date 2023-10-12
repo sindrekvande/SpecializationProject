@@ -7,7 +7,7 @@ from threading import *
 #from bluepy.btle import *
 
 import import_modules
-from SoCperformance import SoCperformance
+from BT import BTconnect
 import parameters as pm
 '''
 async def test():
@@ -26,8 +26,8 @@ async def test():
 asyncio.run(test())
 '''
 async def test2():
-    async with SoCperformance() as soc:
-        #soc.waitForDevice()
+    async with BTconnect() as BT:
+        await BT.waitForDevice()
         
         print('Disconnecting in:')
         print('5...')
