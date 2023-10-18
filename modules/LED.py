@@ -1,8 +1,11 @@
 import pinOut
 import RPi.GPIO as GPIO
 import pandas as pd
+import asyncio
+from file_handler import file_handler
 import import_main
 import parameters as pm
+import messages as msg
 
 class LED:
     freq = 1000 # measured as 870Hz, shouldn't affect the behaviour
@@ -77,3 +80,24 @@ class LED:
         self.set_brightness(irrValue)
 
         #time.sleep(0.5)?
+
+async def LEDcorutine(file_handler: file_handler):
+    # Initialize LED
+    led_control = LED(file_handler.inputFile)
+
+    if pm.rampUp:
+        for key, irrValue in led_control.brightnessDF.itertuples():
+            nextValue = led_control.single_value(key + 1)
+            for i in range(0,pm.rampUpStep, 1):
+                led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
+                await asyncio.sleep(pm.timeStep/pm.rampUpStep)
+    else:
+        for key, irrValue in led_control.brightnessDF.itertuples():
+            # Set brighness on led from file value
+            led_control.set_brightness(irrValue)
+
+            # Wait for next value
+            await asyncio.sleep(pm.timeStep)
+    
+    # End the other corutines
+    msg.testActive = False

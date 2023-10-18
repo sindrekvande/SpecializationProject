@@ -3,6 +3,7 @@ import asyncio
 import os, sys, pexpect, time
 import import_main
 import parameters as pm
+import messages as msg
 
 class BTconnect:
     device = '' #E0:21:78:85:2A:FB
@@ -62,8 +63,8 @@ class BTconnect:
     
     def callback(self, sender: BleakGATTCharacteristic, data: bytearray):
         print(f"{sender}: {data[0]}")
-        #Send data[0] to the file
-        self.performance = data[0]
+        #Send data[0] to the message dict
+        msg.messages[msg.perfData] = data[0]
 
     async def scan(self):
         dev = await BleakScanner.discover()
@@ -75,12 +76,12 @@ class BTconnect:
         if self.device == '':
             print('Device by the name of {0} could not be found'.format(pm.BTname))
 
-    async def waitForDevice(self, performance, testActive):
+    async def waitForDevice(self):
         disconnected_event = asyncio.Event()
         def disconnected_callback(client):
             print("Disconnected event")
             disconnected_event.set()
-        while testActive:
+        while msg.testActive:
             try:
                 async with BleakClient(self.device, disconnected_callback=disconnected_callback) as client:
                     print("Starting notify")
@@ -88,13 +89,13 @@ class BTconnect:
                     print("Waiting for disconnect")
                     await disconnected_event.wait()
                     print("Disconnected")
-                    performance = self.perfomance #This only works if there are only ONE notification
-                    disconnect_event.clear()
+                    #performance = self.perfomance #This only works if there are only ONE notification
+                    disconnected_event.clear()
             except:
                 await asyncio.sleep(pm.btInterval)
 
 
-    def pairDevice(self): #Only needed if pairing with equal numbers validation
+    async def pairDevice(self): #Only needed if pairing with equal numbers validation
         response=''
         p = pexpect.spawn('bluetoothctl', encoding='utf-8')
         p.logfile_read = sys.stdout
@@ -127,7 +128,7 @@ class BTconnect:
         #time.sleep(1)
         return
 
-    def unpairDevice(self):
+    async def unpairDevice(self):
         response=''
         p = pexpect.spawn('bluetoothctl', encoding='utf-8')
         p.logfile_read = sys.stdout

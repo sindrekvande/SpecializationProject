@@ -5,7 +5,7 @@ from datetime import datetime
 
 #variable = 0
 
-class testClass():
+class testClass:
     async def testFunc(self):
         #global variable
         #variable[0] = 1
