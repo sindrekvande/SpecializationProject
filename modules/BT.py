@@ -10,7 +10,8 @@ class BTconnect:
     perfomance = 0
     #testActive = True
 
-    async def __aenter__(self):
+    async def create(self):
+        self = BTconnect()
         await self.scan()
         if device == '': exit()
         self.client = BleakClient(self.device)
@@ -28,9 +29,10 @@ class BTconnect:
             self.unpairDevice()
             self.__aenter__()
             #print('Delete paired device on Pi, and/or erase+flash nRF')
+        return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        pass
+    #async def __aexit__(self, exc_type, exc_val, exc_tb):
+    #    pass
     #    self.unpairDevice()
     
     async def find_service(self):
@@ -92,7 +94,7 @@ class BTconnect:
                     #performance = self.perfomance #This only works if there are only ONE notification
                     disconnected_event.clear()
             except:
-                await asyncio.sleep(pm.btInterval)
+                await asyncio.sleep(pm.BTinterval)
 
 
     async def pairDevice(self): #Only needed if pairing with equal numbers validation
@@ -129,7 +131,6 @@ class BTconnect:
         return
 
     async def unpairDevice(self):
-        response=''
         p = pexpect.spawn('bluetoothctl', encoding='utf-8')
         p.logfile_read = sys.stdout
         p.expect('#')
@@ -141,6 +142,6 @@ class BTconnect:
         p.sendline("quit")
         p.close()
 
-async def BTcorutine(performance, testActive):
-    async with BTconnect() as BT:
-        await BT.waitForDevice(performance, testActive)
+async def BTcorutine(BT: BTconnect, testActive):
+    #async with BTconnect() as BT:
+    await BT.waitForDevice(testActive)

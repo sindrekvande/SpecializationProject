@@ -4,48 +4,34 @@ import asyncio
 
 from modules.ADC import ADC # Ikke sikker på om dette fungerer som jeg tror
 from modules.DAC import DAC
-from modules.LED import LED
+from modules.LED import LED, LEDcorutine
 from modules.file_handler import file_handler
 from modules.pinOut import pinOut
-from modules.BT import BTcorutine 
+from modules.BT import BTconnect, BTcorutine 
 from modules.SPI import SPI
 import parameters as pm
 
 async def main():
-    # Menu?
+    # Initialize files
     file_handler = file_handler()
 
     # Initialize LED
-    led_control = LED(file_handler.inputFile)
+    # led_control = LED(file_handler.inputFile)
 
     # Initialize ADC
 
-    # Initialize DAC
+    # initialize BT
+    BT = await BTconnect.create()
 
     # Loop: Simulate light, measure values, track performance of SoC, save to file
-    for key, irrValue in led_control.brightnessDF.itertuples():
-        outputValues = []
-        nextValue = led_control.single_value(key + 1)
-        if pm.rampUp == True:
-            for i in range(0,pm.rampUpStep, 1):
-                led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
-                await asyncio.sleep(pm.timeStep/(pm.rampUpStep*60))
-        else:
-            # Set brighness on led from file value
-            led_control.set_brightness(irrValue)
+    LEDtask = asyncio.create_task(LEDcorutine(file_handler))
+    BTtask = asyncio.create_task(BTcorutine(BT))
+    #stop = asyncio.create_task(ADCcorutine())
 
-            # Let led brightness, voltages and currents settle
-            await asyncio.sleep(pm.timeStep)
+    await LEDtask
+    await BTtask
+    #await stop
 
-        # Measure ADC values
-        
-        # Get number of packages from SoC
-        
-        # Save to file
-        file_handler.append_to_file(outputValues)
-
-
-
-        # End
+    # End
 
 asyncio.run(main())
