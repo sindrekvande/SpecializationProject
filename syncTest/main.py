@@ -27,8 +27,9 @@ async def main():
     stop = asyncio.create_task(tc.stopFunc())
     #asyncio.coroutines([tc.testFunc(), tc.testFunc2(), tc.stopFunc()])
 
+    await stop
     await one
     await two
-    await stop
+    
 
 asyncio.run(main())

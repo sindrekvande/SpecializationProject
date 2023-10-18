@@ -2,7 +2,7 @@ import pinOut
 import RPi.GPIO as GPIO
 import pandas as pd
 import asyncio
-from file_handler import file_handler
+from file_handler import file
 import import_main
 import parameters as pm
 import messages as msg
@@ -81,7 +81,7 @@ class LED:
 
         #time.sleep(0.5)?
 
-async def LEDcorutine(file_handler: file_handler):
+async def LEDcorutine(file_handler: file):
     # Initialize LED
     led_control = LED(file_handler.inputFile)
 
