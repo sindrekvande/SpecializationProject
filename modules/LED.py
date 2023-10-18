@@ -81,7 +81,7 @@ class LED:
 
         #time.sleep(0.5)?
 
-async def LEDcorutine(file_handler: file):
+async def LEDcoroutine(file_handler: file):
     # Initialize LED
     led_control = LED(file_handler.inputFile)
 

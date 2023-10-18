@@ -142,6 +142,6 @@ class BTconnect:
         p.sendline("quit")
         p.close()
 
-async def BTcorutine(BT: BTconnect, testActive):
+async def BTcoroutine(BT: BTconnect, testActive):
     #async with BTconnect() as BT:
     await BT.waitForDevice(testActive)
