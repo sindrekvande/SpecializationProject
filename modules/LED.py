@@ -2,6 +2,7 @@ import pinOut
 import RPi.GPIO as GPIO
 import pandas as pd
 import asyncio
+import atimer
 from file_handler import file
 import import_main
 import parameters as pm
@@ -86,18 +87,29 @@ async def LEDcoroutine(file_handler: file):
     led_control = LED(file_handler.inputFile)
 
     if pm.rampUp:
+        timer = atimer.Timer(pm.timeStep/pm.rampUpStep)
+        timer.start()
         for key, irrValue in led_control.brightnessDF.itertuples():
             nextValue = led_control.single_value(key + 1)
             for i in range(0,pm.rampUpStep, 1):
                 led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
-                await asyncio.sleep(pm.timeStep/pm.rampUpStep)
+                #await asyncio.sleep(pm.timeStep/pm.rampUpStep)
+                await timer
+        
+        timer.close()
     else:
+        timer = atimer.Timer(pm.timeStep)
+        timer.start()
         for key, irrValue in led_control.brightnessDF.itertuples():
             # Set brighness on led from file value
             led_control.set_brightness(irrValue)
 
             # Wait for next value
-            await asyncio.sleep(pm.timeStep)
+            #await asyncio.sleep(pm.timeStep)
+            await timer
+        
+        timer.close()
+    
     
     # End the other corutines
     msg.testActive = False

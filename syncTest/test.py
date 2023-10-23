@@ -2,6 +2,7 @@ import asyncio
 import time
 import params as pm
 from datetime import datetime
+import atimer
 
 #variable = 0
 
@@ -24,9 +25,13 @@ class testClass:
             await asyncio.sleep(1)
 
     async def stopFunc(self):
+        timer = atimer.Timer(1)
+        timer.start()
         for i in range(0, 10, 1):
             print(f"Time: {datetime.now().strftime('%H:%M:%S.%f')}")
-            await asyncio.sleep(1)
+            #await asyncio.sleep(1)
+            await timer
+        timer.close()
         print("Done")
         pm.testActive = False
 
