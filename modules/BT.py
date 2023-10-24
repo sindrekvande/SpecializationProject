@@ -65,8 +65,8 @@ class BTconnect:
     
     def callback(self, sender: BleakGATTCharacteristic, data: bytearray):
         print(f"{sender}: {data[0]}")
-        #Send data[0] to the message dict
-        msg.messages[msg.perfData] = data[0]
+        
+        msg.messages[msg.btPackets] += len(data)
 
     async def scan(self):
         dev = await BleakScanner.discover()
@@ -82,10 +82,12 @@ class BTconnect:
         disconnected_event = asyncio.Event()
         def disconnected_callback(client):
             print("Disconnected event")
+            msg.messages[msg.btDisconnect] = 1
             disconnected_event.set()
         while msg.testActive:
             try:
                 async with BleakClient(self.device, disconnected_callback=disconnected_callback) as client:
+                    msg.messages[msg.btConnect] = 1
                     print("Starting notify")
                     await client.start_notify(self.serviceChar, self.callback)
                     print("Waiting for disconnect")

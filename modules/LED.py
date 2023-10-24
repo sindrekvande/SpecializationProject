@@ -95,6 +95,8 @@ async def LEDcoroutine(file_handler: file):
                 led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
                 #await asyncio.sleep(pm.timeStep/pm.rampUpStep)
                 await timer
+                file_handler.append_to_file()
+                msg.resetBTmessages()
         
         timer.close()
     else:
@@ -107,6 +109,8 @@ async def LEDcoroutine(file_handler: file):
             # Wait for next value
             #await asyncio.sleep(pm.timeStep)
             await timer
+            file_handler.append_to_file()
+            msg.resetBTmessages()
         
         timer.close()
     

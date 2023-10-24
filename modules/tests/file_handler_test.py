@@ -1,9 +1,12 @@
 import import_modules
-from file_handler import file_handler
+from file_handler import file
 
-fileHandler = file_handler()
+fileHandler = file()
 
 def test1():
     fileHandler.append_to_file([0, 1, 2, 3, 4, 5, 6, 7])
 
-test1()
+def test2():
+    fileHandler.append_to_file()
+
+test2()
