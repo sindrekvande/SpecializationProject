@@ -1,9 +1,6 @@
 import time
-import spidev
 import import_modules
-#import RPi.GPIO as GPIO
 import SPI
-import pigpio
 import pinOut
 
 if __name__ == '__main__':
@@ -11,7 +8,7 @@ if __name__ == '__main__':
     
     try:
         while True:
-            pass  # Infinite loop to keep script running and process callbacks
+            time.sleep(1)  # Infinite loop to keep script running and process callbacks NEED TIMER
     
     except KeyboardInterrupt:
         print("\nExiting...")
