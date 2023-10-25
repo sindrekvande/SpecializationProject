@@ -1,7 +1,7 @@
 TP10            = 1
 I2C_SDA         = 3
 I2C_SCI         = 5
-SHTD_BUE        = 7
+SHTD_BUF        = 7
 UART_TXD        = 8
 UART_RXD        = 10
 SPI_2_CS_DAC2   = 11
