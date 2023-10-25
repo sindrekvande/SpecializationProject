@@ -69,11 +69,11 @@ class BTconnect:
         msg.messages[msg.btPackets] += len(data)
 
     async def scan(self):
-        dev = await BleakScanner.discover()
-        for i in range(0,len(dev)):
+        devices = await BleakScanner.discover()
+        for device in dev:
             #print("["+str(i)+"]"+str(dev[i]))
-            if (str(dev[i])[-len(pm.BTname):] == pm.BTname):
-                self.device = str(dev[i])[:-(len(pm.BTname)+2)]
+            if (str(device)[-len(pm.BTname):] == pm.BTname):
+                self.device = str(devvice)[:-(len(pm.BTname)+2)]
                 print('Device called {0} found with MAC {1}'.format(pm.BTname,self.device))
         if self.device == '':
             print('Device by the name of {0} could not be found'.format(pm.BTname))
