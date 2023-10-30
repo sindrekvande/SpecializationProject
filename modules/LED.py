@@ -24,6 +24,7 @@ class LED:
         if percent >= 0 and percent <= 100:
             self.pwm.ChangeDutyCycle(percent)
             self.duty = percent
+            msg.ledPercent = percent
     
     def get_brightness_percent(self):
         return self.duty
@@ -32,55 +33,12 @@ class LED:
         pass # do some sort of calibration with the pyranometer
 
     def convert_watt_to_percent(self, watt): # 1000 W/m^2 -> 100% PWM
-        return ((watt / 1000) * 100)
+        return ((watt / pm.MaxLedWatt) * 100)
 
     def set_brightness(self, watt):
         self.set_brightness_percent(self.convert_watt_to_percent(watt))
 
-    def get_values_from_file(self, file):
-        self.brightnessDF = pd.read_csv(file, sep='\t', usecols = [pm.column],  dtype = float, nrows = (pm.numberOfDays*60*24)) # header=0, index_col=False, 
-        return self.brightnessDF
 
-    def __str__(self):
-        self.brightnessDF
-
-    def single_value(self, index):
-        return self.brightnessDF.loc[index, pm.column]
-
-    def filter_NaN_values(self, file):
-        NaNCounter = 0
-        self.get_values_from_file(file)
-
-        for key, irrvalue in self.brightnessDF.itertuples():   
-            if pd.isna(irrvalue) and NaNCounter == 0:
-                previousValue = self.single_value(key - 1)
-                #Check if next values are NaN
-                for nextValueIndex in range(1, len(self.brightnessDF) - key):
-                        NaNCounter += 1
-                        nextValue = self.single_value(key + nextValueIndex)
-                        if pd.notna(nextValue):
-                            break
-            if NaNCounter > 0:
-                self.brightnessDF.loc[key, pm.column] = (previousValue + nextValue)/2
-                NaNCounter -= 1
-                    
-        return self.brightnessDF
-    
-    def brightness_interpolation(self):
-        fadeDuration = 2.0
-
-        for key, irrValue in self.brightnessDF.itertuples():
-            currentBrightness = 0
-            stepSize = (irrValue - currentBrightness)/pm.rampUpStep
-
-            for _ in range(pm.rampUpStep):
-                currentBrightness += stepSize
-                self.set_brightness(currentBrightness)
-                self.time.sleep(fadeDuration/pm.rampUpStep)
-        
-        self.set_brightness(irrValue)
-
-        #time.sleep(0.5)?
 
 async def LEDcoroutine(file_handler: file):
     # Initialize LED
@@ -92,7 +50,9 @@ async def LEDcoroutine(file_handler: file):
         for key, irrValue in led_control.brightnessDF.itertuples():
             nextValue = led_control.single_value(key + 1)
             for i in range(0,pm.rampUpStep, 1):
-                led_control.set_brightness(irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep)
+                tempValue = irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep
+                led_control.set_brightness(tempValue)
+                msg.irrValue = tempValue
                 #await asyncio.sleep(pm.timeStep/pm.rampUpStep)
                 await timer
                 file_handler.append_to_file()
@@ -105,7 +65,7 @@ async def LEDcoroutine(file_handler: file):
         for key, irrValue in led_control.brightnessDF.itertuples():
             # Set brighness on led from file value
             led_control.set_brightness(irrValue)
-
+            msg.irrValue = irrValue
             # Wait for next value
             #await asyncio.sleep(pm.timeStep)
             await timer

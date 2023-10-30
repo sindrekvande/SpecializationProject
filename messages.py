@@ -1,8 +1,10 @@
-timeStamp = "time"
-irrValue = "irrValue"
-btConnect = "btConnectFlag"
-btDisconnect = "btDisconnectFlag"
-btPackets = "btPackets"
+timeStamp   = "time"
+irrValue    = "irrValue"
+ledPercent  = "ledPercent"
+
+btConnect       = "btConnectFlag"
+btDisconnect    = "btDisconnectFlag"
+btPackets       = "btPackets"
 
 adc1ch0 = "adc1ch0"
 adc1ch1 = "adc1ch1"
@@ -22,11 +24,12 @@ adc2ch5 = "adc2ch5"
 adc2ch6 = "adc2ch6"
 adc2ch7 = "adc2ch7"
 
-messages = {timeStamp: 0,
-            irrValue: 0,
-            btConnect: 0,
-            btDisconnect: 0,
-            btPackets: 0,
+messages = {timeStamp:      0,
+            irrValue:       0,
+            ledPercent:     0,
+            btConnect:      0,
+            btDisconnect:   0,
+            btPackets:      0,
 
             adc1ch0: 0,
             adc1ch1: 0,

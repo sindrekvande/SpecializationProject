@@ -10,3 +10,4 @@ column = 'Gg_pyr'
 BTname = 'SoC BLE'
 BTservice = '180d'
 BTinterval = 2.0
+MaxLedWatt = 1000 # Max W/m^2 output of LED
