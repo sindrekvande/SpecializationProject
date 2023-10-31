@@ -1,12 +1,25 @@
 import spidev
 import RPi.GPIO as GPIO
 import pinOut
-import time
+import atimer
 import asyncio
+import import_main
+import messages as msg
+import time
 
 class SPI:
 
     NUM_CHANNELS = 8
+    resp = 0
+    responses = []
+    ch0_values = []
+    ch1_values = []
+    ch2_values = []
+    ch3_values = []
+    ch4_values = []
+    ch5_values = []
+    ch6_values = []
+    ch7_values = []
     counter = 0
 
     def __init__(self): #spiDevice=0 (ADC1), spiDevice=1 (ADC2)
@@ -15,14 +28,22 @@ class SPI:
         self.setup_gpio()
         self.reset_adc()
         
-        self.write_adc_register(0x014, 0b00000000) #Divide clock
+        #self.write_adc_register(0x014, 0b00000000) #Set status header
         self.write_adc_register(0x011, 0b01100100) #High Resolution Mode
         
         self.close_spi()
 
-        self.setup_spi(0, 1, 25000000)
+        self.setup_spi(0, 1, 20000000)
         self.setup_gpio()
 
+        print(f"Channel 0 status register: {self.read_adc_register(0x04c)}")
+        print(f"Channel 1 status register: {self.read_adc_register(0x04d)}")
+        print(f"Channel 2 status register: {self.read_adc_register(0x04e)}")
+        print(f"Channel 3 status register: {self.read_adc_register(0x04f)}")
+        print(f"Channel 4 status register: {self.read_adc_register(0x050)}")
+        print(f"Channel 5 status register: {self.read_adc_register(0x051)}")
+        print(f"Channel 6 status register: {self.read_adc_register(0x052)}")
+        print(f"Channel 7 status register: {self.read_adc_register(0x053)}")
 
         self.write_adc_register(0x013, 0b10010000) #Set SD-output
 
@@ -47,33 +68,13 @@ class SPI:
         """Reset the ADC."""
         GPIO.output(pinOut.ADC12_RESET, GPIO.LOW)
         time.sleep(0.01)
-        #await asyncio.sleep(0.01)
         GPIO.output(pinOut.ADC12_RESET, GPIO.HIGH)
         time.sleep(0.01)
 
     def data_ready_callback(self, channel):
         """Handle data ready interrupt."""
-        #self.counter += 1
-        # Disable DRDY interrupt
-        #GPIO.remove_event_detect(pinOut.ADC1_DRDY)
-        #print("---------------------------------------------")
-        #print("----")
-        #for i in range(self.NUM_CHANNELS):
-        resp = self.spi.xfer2([0x8000, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00])
-        #callback_result = [[bin(resp[0]), bin(resp[1]), bin(resp[2]), bin(resp[3])],
-        #                   [bin(resp[4]), bin(resp[5]), bin(resp[6]), bin(resp[7])], 
-        #                   [bin(resp[8]), bin(resp[9]), bin(resp[10]), bin(resp[11])],
-        #                   [bin(resp[12]), bin(resp[13]), bin(resp[14]), bin(resp[15])],
-        #                   [bin(resp[16]), bin(resp[17]), bin(resp[18]), bin(resp[19])],
-        #                   [bin(resp[20]), bin(resp[21]), bin(resp[22]), bin(resp[23])],
-        #                   [bin(resp[24]), bin(resp[25]), bin(resp[26]), bin(resp[27])],
-        #                   [bin(resp[28]), bin(resp[29]), bin(resp[30]), bin(resp[31])]]
-        #
-        #return print(callback_result)
-
-        #GPIO.output(pinOut.RPI_GPIO_22, GPIO.LOW)
-        #GPIO.output(pinOut.RPI_GPIO_22, GPIO.HIGH)
-        #GPIO.output(pinOut.RPI_GPIO_22, GPIO.LOW)
+        self.response = self.spi.xfer2([0x8000, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+        self.output_value(self.response)
 
     def read_adc_register(self, address):
         """Read data from ADC register."""
@@ -83,7 +84,6 @@ class SPI:
             print("Incomplete data received from ADC!")
             return None
         return [bin(resp[0]), bin(resp[1])]
-        #return bin(resp[1])
         
     def write_adc_register(self, address, value):
         """Write data to ADC register and verify."""
@@ -97,8 +97,50 @@ class SPI:
         else:
             print(f"Write succesfull! {bin(value)} at address {hex(address)}.")
 
+    def output_value(self, response):
+        channel_offset = 0
+
+        for i in range(8):
+            dec_channel = [self.response[1 + i * 4], self.response[2 + i * 4], self.response[3 + i * 4]]
+            hex_channel = [hex(d)[2:].zfill(2) for d in dec_channel]
+            hex_string_channel = ''.join(hex_channel)
+            voltage_channel = (int(hex_string_channel, 16) / 8388607) * 2.499999702
+
+            setattr(self, f'ch{i}_values', getattr(self, f'ch{i}_values', []) + [voltage_channel])
+
     def close_spi(self):
         """Cleanup function."""
         self.spi.close()
         GPIO.cleanup()
+
+async def SPIcoroutine():
+    spi = SPI()
+
+    try:
+        timer = atimer.Timer(1)
+        timer.start()
+
+        timeout = 5
+        start_time = time.time()
+
+        while msg.testActive:
+            await timer
+            channel_sums = [sum(getattr(spi, f'ch{i}_values')) for i in range(8)]
+            channel_lengths = [len(getattr(spi, f'ch{i}_values')) for i in range(8)]
+
+            for i in range(8):
+                setattr(msg, f'adc2ch{i}', channel_sums[i] / channel_lengths[i])
+                getattr(spi, f'ch{i}_values').clear()
+
+            if time.time() - start_time >= timeout:
+                break
+
+        print(msg.adc2ch2)
+        timer.close()
+        spi.close_spi()
+    
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        timer.close()
+        spi.close_spi()
     
