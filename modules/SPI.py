@@ -127,9 +127,27 @@ async def SPIcoroutine():
             channel_lengths = [len(getattr(spi, f'ch{i}_values')) for i in range(8)]
 
             for i in range(8):
-                setattr(msg, f'adc2ch{i}', channel_sums[i] / channel_lengths[i])
-                print(spi.ch2_values)
-                getattr(spi, f'ch{i}_values').clear()
+                channel_value = channel_sums[i] / channel_lengths[i]
+                setattr(spi, f'ch{i}_values', [])
+                print(len(spi.ch2_values))
+                print(channel_value)
+
+                if i == 0:
+                    msg.adc2ch0 = channel_value
+                elif i == 1:
+                    msg.adc2ch1 = channel_value
+                elif i == 2:
+                    msg.adc2ch2 = channel_value
+                elif i == 3:
+                    msg.adc2ch1 = channel_value
+                elif i == 4:
+                    msg.adc2ch2 = channel_value
+                elif i == 5:
+                    msg.adc2ch1 = channel_value
+                elif i == 6:
+                    msg.adc2ch2 = channel_value
+                elif i == 7:
+                    msg.adc2ch1 = channel_value
 
             #if time.time() - start_time >= timeout:
             #    break
