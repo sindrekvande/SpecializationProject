@@ -1,16 +1,15 @@
 import spidev
 import RPi.GPIO as GPIO
-import pinOut
+import modules.pinOut as pinOut
 import atimer
 import asyncio
-import import_main
+#import import_main
 import messages as msg
 import time
 
 class SPI:
 
     NUM_CHANNELS = 8
-    resp = 0
     responses = []
     ch0_values = []
     ch1_values = []
@@ -62,7 +61,6 @@ class SPI:
         GPIO.setup(pinOut.ADC1_DRDY, GPIO.IN)
         GPIO.setup(pinOut.SPI_1_CS_ADC1, GPIO.OUT)
         GPIO.setup(pinOut.SPI_1_CS_ADC2, GPIO.OUT)
-        GPIO.setup(pinOut.RPI_GPIO_22, GPIO.OUT)
 
     def reset_adc(self):
         """Reset the ADC."""
@@ -130,12 +128,13 @@ async def SPIcoroutine():
 
             for i in range(8):
                 setattr(msg, f'adc2ch{i}', channel_sums[i] / channel_lengths[i])
+                print(spi.ch2_values)
                 getattr(spi, f'ch{i}_values').clear()
 
-            if time.time() - start_time >= timeout:
-                break
+            #if time.time() - start_time >= timeout:
+            #    break
 
-        print(msg.adc2ch2)
+        #print(msg.adc2ch2)
         timer.close()
         spi.close_spi()
     

@@ -1,35 +1,40 @@
-from test import *
 import time
-from concurrent.futures import ProcessPoolExecutor
+import sys
 import asyncio
+import RPi.GPIO as GPIO
+import pigpio
 
-import params as pm
+#from modules.ADC import ADC # Ikke sikker på om dette fungerer som jeg tror
+#from modules.DAC import DAC
+from modules.LED import LED, LEDcoroutine
+from modules.file_handler import file
+import modules.pinOut as pinOut
+from modules.BT import BTconnect, BTcoroutine 
+from modules.SPI import SPI, SPIcoroutine
+import parameters as pm
 
-
-'''
-print(pm.dict)
-print(pm.dcTime)
-
-
-
-tc.testFunc()
-
-print(pm.dict)
-print(pm.dcTime)
-'''
 async def main():
-    tc = testClass()
 
-    #executor = ProcessPoolExecutor(3)
-    #loop = asyncio.new_event_loop()
-    one = asyncio.create_task(tc.testFunc())
-    two = asyncio.create_task(tc.testFunc2())
-    stop = asyncio.create_task(tc.stopFunc())
-    #asyncio.coroutines([tc.testFunc(), tc.testFunc2(), tc.stopFunc()])
+    # Initialize files
+    file_handler = file()
 
-    await stop
-    await one
-    await two
-    
+    # Initialize LED
+    # led_control = LED(file_handler.inputFile)
+
+    # Initialize ADC
+
+    # initialize BT
+    #BT = await BTconnect.create()
+
+    # Start corutines: Simulate light, measure values, track performance of DUT, save to file
+    LEDtask = asyncio.create_task(LEDcoroutine(file_handler))
+    #BTtask = asyncio.create_task(BTcoroutine(BT))
+    ADCtask = asyncio.create_task(SPIcoroutine())
+
+    await LEDtask
+    #await BTtask
+    await ADCtask
+
+    # End
 
 asyncio.run(main())

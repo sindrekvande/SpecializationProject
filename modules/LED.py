@@ -1,30 +1,42 @@
-import pinOut
+import modules.pinOut as pinOut #LIGHT ON
+import modules.pinOut_lgpio as pinOut_lgpio
+#import pinOut #LIGHT OFF
 import RPi.GPIO as GPIO
+import pigpio
 import pandas as pd
 import asyncio
 import atimer
-from file_handler import file
-import import_main
-import parameters as pm
+from modules.file_handler import file #LIGHT ON
+#from file_handler import file #LIGHT OFF
+#import import_main #LIGHT OFF
+import parameters as pm 
 import messages as msg
 
 class LED:
-    freq = 1000 # measured as 870Hz, shouldn't affect the behaviour
+    freq = 10000 # measured as 870Hz, shouldn't affect the behaviour
     duty = 0
 
     def __init__(self, file):
-        self.get_values_from_file(file)
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(pinOut.LED_DRV_DIM,GPIO.OUT)
-        self.pwm = GPIO.PWM(pinOut.LED_DRV_DIM,self.freq)
-        self.pwm.start(self.duty)
+        #self.get_values_from_file(file)
+        self.pi = pigpio.pi()
+        self.pi.set_mode(pinOut_lgpio.LED_DRV_DIM, pigpio.OUTPUT)
+        self.pi.set_PWM_frequency(pinOut_lgpio.LED_DRV_DIM, self.freq)
+
+        self.set_brightness_percent(0)
+        
+        #GPIO.setwarnings(False)
+        #GPIO.setmode(GPIO.BOARD)
+        #GPIO.setup(pinOut.LED_DRV_DIM, GPIO.OUT)
+        
+        #self.pwm = GPIO.PWM(pinOut.LED_DRV_DIM, self.freq)
+        #self.pwm.start(self.duty)
 
     def set_brightness_percent(self, percent): # programmed = measured: 50 = 50, 25 = 28, 75 = 73
         if percent >= 0 and percent <= 100:
-            self.pwm.ChangeDutyCycle(percent)
+            #self.pwm.ChangeDutyCycle(percent)
+            self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, percent)
             self.duty = percent
-            msg.ledPercent = percent
+            msg.messages[msg.ledPercent] = percent
     
     def get_brightness_percent(self):
         return self.duty
@@ -47,12 +59,12 @@ async def LEDcoroutine(file_handler: file):
     if pm.rampUp:
         timer = atimer.Timer(pm.timeStep/pm.rampUpStep)
         timer.start()
-        for key, irrValue in led_control.brightnessDF.itertuples():
-            nextValue = led_control.single_value(key + 1)
+        for key, irrValue in file_handler.brightnessDF.itertuples():
+            nextValue = file_handler.single_value(key + 1)
             for i in range(0,pm.rampUpStep, 1):
                 tempValue = irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep
                 led_control.set_brightness(tempValue)
-                msg.irrValue = tempValue
+                msg.messages[msg.irrValue] = tempValue
                 #await asyncio.sleep(pm.timeStep/pm.rampUpStep)
                 await timer
                 file_handler.append_to_file()
@@ -62,10 +74,10 @@ async def LEDcoroutine(file_handler: file):
     else:
         timer = atimer.Timer(pm.timeStep)
         timer.start()
-        for key, irrValue in led_control.brightnessDF.itertuples():
+        for key, irrValue in file_handler.brightnessDF.itertuples():
             # Set brighness on led from file value
             led_control.set_brightness(irrValue)
-            msg.irrValue = irrValue
+            msg.messages[msg.irrValue] = irrValue
             # Wait for next value
             #await asyncio.sleep(pm.timeStep)
             await timer
