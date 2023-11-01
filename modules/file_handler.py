@@ -1,15 +1,15 @@
 import csv
 import pandas as pd
-import import_main
+#import import_main #LIGHT OFF
 import parameters as pm
 import messages as msg
 from datetime import datetime
 
-#inputFilePath = "/home/pi/Desktop/SpecializationProject/datasets/"
-#outputFilePath = "/home/pi/Desktop/SpecializationProject/measurements/"
+inputFilePath = "/home/pi/Desktop/SpecializationProject/datasets/"
+outputFilePath = "/home/pi/Desktop/SpecializationProject/measurements/"
 
-inputFilePath = "C:/Users/kriss/Desktop/NTNU/SpecializationProject/datasets/"
-outputFilePath = "C:/Users/kriss/Desktop/NTNU/SpecializationProject/measurements/"
+#inputFilePath = "C:/Users/kriss/Desktop/NTNU/SpecializationProject/datasets/"
+#outputFilePath = "C:/Users/kriss/Desktop/NTNU/SpecializationProject/measurements/"
 
 #headers = ['time','irradiance', 'led_percent', 'SoCpacks', 'adc1.1', 'adc1.2', 'adc1.3', 'adc1.4', 'adc1.5', 'adc1.6', 'adc1.7', 'adc1.8', 'adc2.1', 'adc2.2', 'adc2.3', 'adc2.4', 'adc2.5', 'adc2.6', 'adc2.7', 'adc2.8']
 

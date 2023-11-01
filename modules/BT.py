@@ -1,7 +1,7 @@
 from bleak import *
 import asyncio
 import os, sys, pexpect, time
-import import_main
+#import import_main
 import parameters as pm
 import messages as msg
 

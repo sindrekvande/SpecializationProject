@@ -125,34 +125,36 @@ async def SPIcoroutine():
             await timer
             channel_sums = [sum(getattr(spi, f'ch{i}_values')) for i in range(8)]
             channel_lengths = [len(getattr(spi, f'ch{i}_values')) for i in range(8)]
+            print(channel_lengths)
 
             for i in range(8):
+                #setattr(msg, f'adc2ch{i}', channel_sums[i] / channel_lengths[i])
+                #getattr(spi, f'ch{i}_values').clear()
                 channel_value = channel_sums[i] / channel_lengths[i]
                 setattr(spi, f'ch{i}_values', [])
-                print(len(spi.ch2_values))
-                print(channel_value)
+                #print(len(spi.ch2_values))
+                #print(channel_value)
 
                 if i == 0:
-                    msg.adc2ch0 = channel_value
+                    msg.messages[msg.adc2ch0] = channel_value
                 elif i == 1:
-                    msg.adc2ch1 = channel_value
+                    msg.messages[msg.adc2ch1] = channel_value
                 elif i == 2:
-                    msg.adc2ch2 = channel_value
+                    msg.messages[msg.adc2ch2] = channel_value
                 elif i == 3:
-                    msg.adc2ch1 = channel_value
+                    msg.messages[msg.adc2ch3] = channel_value
                 elif i == 4:
-                    msg.adc2ch2 = channel_value
+                    msg.messages[msg.adc2ch4] = channel_value
                 elif i == 5:
-                    msg.adc2ch1 = channel_value
+                    msg.messages[msg.adc2ch5] = channel_value
                 elif i == 6:
-                    msg.adc2ch2 = channel_value
+                    msg.messages[msg.adc2ch6] = channel_value
                 elif i == 7:
-                    msg.adc2ch1 = channel_value
+                    msg.messages[msg.adc2ch7] = channel_value
 
             #if time.time() - start_time >= timeout:
             #    break
 
-        #print(msg.adc2ch2)
         timer.close()
         spi.close_spi()
     
