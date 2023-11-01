@@ -23,13 +23,6 @@ class LED:
         self.pi.set_PWM_frequency(pinOut_lgpio.LED_DRV_DIM, self.freq)
 
         self.set_brightness_percent(0)
-        
-        #GPIO.setwarnings(False)
-        #GPIO.setmode(GPIO.BOARD)
-        #GPIO.setup(pinOut.LED_DRV_DIM, GPIO.OUT)
-        
-        #self.pwm = GPIO.PWM(pinOut.LED_DRV_DIM, self.freq)
-        #self.pwm.start(self.duty)
 
     def set_brightness_percent(self, percent): # programmed = measured: 50 = 50, 25 = 28, 75 = 73
         if percent >= 0 and percent <= 100:
@@ -49,8 +42,6 @@ class LED:
 
     def set_brightness(self, watt):
         self.set_brightness_percent(self.convert_watt_to_percent(watt))
-
-
 
 async def LEDcoroutine(file_handler: file):
     # Initialize LED

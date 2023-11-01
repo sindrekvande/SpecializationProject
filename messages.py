@@ -24,6 +24,8 @@ adc2ch5 = "adc2ch5"
 adc2ch6 = "adc2ch6"
 adc2ch7 = "adc2ch7"
 
+adc_channels = [adc1ch0, adc1ch1, adc1ch2, adc1ch3, adc1ch4, adc1ch5, adc1ch6, adc1ch7, adc2ch0, adc2ch1, adc2ch2, adc2ch3, adc2ch4, adc2ch5, adc2ch6, adc2ch7]
+
 messages = {timeStamp:      0,
             irrValue:       0,
             ledPercent:     0,
