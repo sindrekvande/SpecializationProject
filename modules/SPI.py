@@ -137,26 +137,26 @@ class SPI:
                 self.adc1_ch0_values.append(adc1_voltage_channel)
                 self.adc2_ch0_values.append(adc2_voltage_channel)
             elif i == 1:
-                self.adc1_ch1_values.append(adc1_voltage_channel)
+                self.adc1_ch1_values.append(adc1_voltage_channel) #Voltage related to current, but not current?
                 self.adc2_ch1_values.append(adc2_voltage_channel)
             elif i == 2:
                 self.adc1_ch2_values.append(adc1_voltage_channel)
                 self.adc2_ch2_values.append(adc2_voltage_channel)
             elif i == 3:
                 self.adc1_ch3_values.append(adc1_voltage_channel)
-                self.adc2_ch3_values.append(adc2_voltage_channel)
+                self.adc2_ch3_values.append(adc2_voltage_channel / (8.06 * 25)) #current
             elif i == 4:
                 self.adc1_ch4_values.append(adc1_voltage_channel)
-                self.adc2_ch4_values.append(adc2_voltage_channel)
+                self.adc2_ch4_values.append(adc2_voltage_channel / (4.02 * 25)) #current
             elif i == 5:
                 self.adc1_ch5_values.append(adc1_voltage_channel)
-                self.adc2_ch5_values.append(adc2_voltage_channel)
+                self.adc2_ch5_values.append(adc2_voltage_channel / (4.02 * 25)) #current
             elif i == 6:
                 self.adc1_ch6_values.append(adc1_voltage_channel)
-                self.adc2_ch6_values.append(adc2_voltage_channel)
+                self.adc2_ch6_values.append(adc2_voltage_channel / (8.06 * 25)) #current
             elif i == 7:
                 self.adc1_ch7_values.append(adc1_voltage_channel)
-                self.adc2_ch7_values.append(adc2_voltage_channel)
+                self.adc2_ch7_values.append(adc2_voltage_channel / (8.06 * 25)) #current
             
 
             #setattr(self, f'adc1_ch{i}_values', getattr(self, f'adc1_ch{i}_values', []) + [adc1_voltage_channel])
