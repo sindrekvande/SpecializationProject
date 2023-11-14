@@ -42,7 +42,7 @@ class I2C:
 
     def sum_states():
         statesNumber = [sum((byte >> i) & 1 for byte in self.states) for i in range(8)]
-        joinStateNumber = ''.join(statesNumber)
+        joinStateNumber = '[' + ' '.join(statesNumber) + ']'
         ######################
         # Send to msg.messages
         ######################
