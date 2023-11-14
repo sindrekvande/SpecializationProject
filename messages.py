@@ -2,8 +2,8 @@ timeStamp   = "time"
 irrValue    = "irrValue"
 ledPercent  = "ledPercent"
 
-btConnect       = "btConnectFlag"
-btDisconnect    = "btDisconnectFlag"
+btConnect       = "btConnectedFlag"
+#btDisconnect    = "btDisconnectFlag"
 btPackets       = "btPackets"
 
 adc1ch0 = "EH_IN_+_BUF"
@@ -30,7 +30,7 @@ messages = {timeStamp:      0,
             irrValue:       0,
             ledPercent:     0,
             btConnect:      0,
-            btDisconnect:   0,
+            #btDisconnect:   0,
             btPackets:      0,
 
             adc1ch0: 0,
@@ -55,6 +55,6 @@ messages = {timeStamp:      0,
 testActive = True
 
 def resetBTmessages():
-    messages[btConnect] = 0
-    messages[btDisconnect] = 0
+    #messages[btConnect] = 0
+    #messages[btDisconnect] = 0
     messages[btPackets] = 0

@@ -82,7 +82,7 @@ class BTconnect:
         disconnected_event = asyncio.Event()
         def disconnected_callback(client):
             print("Disconnected event")
-            msg.messages[msg.btDisconnect] = 1
+            msg.messages[msg.btConnect] = 0
             disconnected_event.set()
         while msg.testActive:
             try:
