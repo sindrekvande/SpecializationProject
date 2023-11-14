@@ -42,6 +42,9 @@ class I2C:
 
     def sum_states():
         resulting_list = [sum((byte >> i) & 1 for byte in self.states) for i in range(8)]
+        ######################
+        # Send to msg.messages
+        ######################
         self.states = []
 
 
