@@ -38,6 +38,8 @@ class file:
         #with open(self.outputFile, "a") as file:
         #    csv.writer(file, delimiter='\t').writerow(list) 
         #    file.close()
+        currentDatetime = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        msg.messages[msg.timeStamp] = str(currentDatetime)
         df = pd.DataFrame({ key:pd.Series(value) for key, value in msg.messages.items() })
         df.to_csv(self.outputFile, mode='a', index=False, header=False, sep="\t")
     

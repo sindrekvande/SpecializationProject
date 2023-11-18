@@ -1,4 +1,4 @@
-timeStamp   = "time"
+timeStamp   = "datetime"
 irrValue    = "irrValue"
 ledPercent  = "ledPercent"
 
