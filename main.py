@@ -24,16 +24,16 @@ async def main():
     # Initialize ADC
 
     # initialize BT
-    #BT = await BTconnect.create()
+    BT = await BTconnect.create()
 
     # Start corutines: Simulate light, measure values, track performance of DUT, save to file
     LEDtask = asyncio.create_task(LEDcoroutine(file_handler))
-    #BTtask = asyncio.create_task(BTcoroutine(BT))
-    ADCtask = asyncio.create_task(SPIcoroutine())
+    BTtask = asyncio.create_task(BTcoroutine(BT))
+    #ADCtask = asyncio.create_task(SPIcoroutine())
 
     await LEDtask
-    #await BTtask
-    await ADCtask
+    await BTtask
+    #await ADCtask
 
     # End
 

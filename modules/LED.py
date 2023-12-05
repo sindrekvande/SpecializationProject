@@ -1,5 +1,6 @@
 import modules.pinOut as pinOut #LIGHT ON
 import modules.pinOut_lgpio as pinOut_lgpio
+import modules.SPI as SPI
 #import pinOut #LIGHT OFF
 import RPi.GPIO as GPIO
 import pigpio
@@ -46,18 +47,20 @@ class LED:
 async def LEDcoroutine(file_handler: file):
     # Initialize LED
     led_control = LED(file_handler.inputFile)
+    spi = SPI.SPI()
 
     if pm.rampUp:
-        timer = atimer.Timer(pm.timeStep/pm.rampUpStep)
+        timer = atimer.Timer(pm.rampUpStep)
         timer.start()
         for key, irrValue in file_handler.brightnessDF.itertuples():
             nextValue = file_handler.single_value(key + 1)
-            for i in range(0,pm.rampUpStep, 1):
-                tempValue = irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep
+            for i in range(0,pm.timeStep/pm.rampUpStep, 1):
+                tempValue = irrValue + ((irrValue - nextValue) * i)/(pm.timeStep/pm.rampUpStep)
                 led_control.set_brightness(tempValue)
                 msg.messages[msg.irrValue] = tempValue
                 #await asyncio.sleep(pm.timeStep/pm.rampUpStep)
                 await timer
+                spi.average_and_update()
                 file_handler.append_to_file()
                 msg.resetBTmessages()
         

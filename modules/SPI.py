@@ -161,6 +161,75 @@ class SPI:
 
             #setattr(self, f'adc1_ch{i}_values', getattr(self, f'adc1_ch{i}_values', []) + [adc1_voltage_channel])
             #setattr(self, f'adc2_ch{i}_values', getattr(self, f'adc2_ch{i}_values', []) + [adc2_voltage_channel])
+    def average_and_update(self):
+        for i in range(8):
+                if i == 0:
+                    adc1_channel_sums = sum(self.adc1_ch0_values)
+                    adc2_channel_sums = sum(self.adc2_ch0_values)
+                    adc1_channel_lengths = len(self.adc1_ch0_values)
+                    adc2_channel_lengths = len(self.adc2_ch0_values)
+                    self.adc1_ch0_values = []
+                    self.adc2_ch0_values = []
+                elif i == 1:
+                    adc1_channel_sums = sum(self.adc1_ch1_values)
+                    adc2_channel_sums = sum(self.adc2_ch1_values)
+                    adc1_channel_lengths = len(self.adc1_ch1_values)
+                    adc2_channel_lengths = len(self.adc2_ch1_values)
+                    self.adc1_ch1_values = []
+                    self.adc2_ch1_values = []
+                elif i == 2:
+                    adc1_channel_sums = sum(self.adc1_ch2_values)
+                    adc2_channel_sums = sum(self.adc2_ch2_values)
+                    adc1_channel_lengths = len(self.adc1_ch2_values)
+                    adc2_channel_lengths = len(self.adc2_ch2_values)
+                    self.adc1_ch2_values = []
+                    self.adc2_ch2_values = []
+                elif i == 3:
+                    adc1_channel_sums = sum(self.adc1_ch3_values)
+                    adc2_channel_sums = sum(self.adc2_ch3_values)
+                    adc1_channel_lengths = len(self.adc1_ch3_values)
+                    adc2_channel_lengths = len(self.adc2_ch3_values)
+                    self.adc1_ch3_values = []
+                    self.adc2_ch3_values = []
+                elif i == 4:
+                    adc1_channel_sums = sum(self.adc1_ch4_values)
+                    adc2_channel_sums = sum(self.adc2_ch4_values)
+                    adc1_channel_lengths = len(self.adc1_ch4_values)
+                    adc2_channel_lengths = len(self.adc2_ch4_values)
+                    self.adc1_ch4_values = []
+                    self.adc2_ch4_values = []
+                elif i == 5:
+                    adc1_channel_sums = sum(self.adc1_ch5_values)
+                    adc2_channel_sums = sum(self.adc2_ch5_values)
+                    adc1_channel_lengths = len(self.adc1_ch5_values)
+                    adc2_channel_lengths = len(self.adc2_ch5_values)
+                    self.adc1_ch5_values = []
+                    self.adc2_ch5_values = []
+                elif i == 6:
+                    adc1_channel_sums = sum(self.adc1_ch6_values)
+                    adc2_channel_sums = sum(self.adc2_ch6_values)
+                    adc1_channel_lengths = len(self.adc1_ch6_values)
+                    adc2_channel_lengths = len(self.adc2_ch6_values)
+                    self.adc1_ch6_values = []
+                    self.adc2_ch6_values = []
+                elif i == 7:
+                    adc1_channel_sums = sum(self.adc1_ch7_values)
+                    adc2_channel_sums = sum(self.adc2_ch7_values)
+                    adc1_channel_lengths = len(self.adc1_ch7_values)
+                    adc2_channel_lengths = len(self.adc2_ch7_values)
+                    self.adc1_ch7_values = []
+                    self.adc2_ch7_values = []
+
+                #adc1_channel_value = adc1_channel_sums[i] / adc1_channel_lengths[i]
+                #adc2_channel_value = adc2_channel_sums[i] / adc2_channel_lengths[i]
+                adc1_channel_value = adc1_channel_sums / adc1_channel_lengths
+                adc2_channel_value = adc2_channel_sums / adc2_channel_lengths
+
+                #setattr(spi, f'adc1_ch{i}_values', [])
+                #setattr(spi, f'adc2_ch{i}_values', [])
+
+                msg.messages[msg.adc_channels[i]] = adc1_channel_value
+                msg.messages[msg.adc_channels[i+8]] = adc2_channel_value
 
     def close_spi(self):
         """Cleanup function."""
