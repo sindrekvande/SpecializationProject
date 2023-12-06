@@ -50,12 +50,12 @@ async def LEDcoroutine(file_handler: file):
     spi = SPI.SPI()
 
     if pm.rampUp:
-        timer = atimer.Timer(pm.rampUpStep)
+        timer = atimer.Timer(pm.timeStep/pm.rampUpStep)
         timer.start()
         for key, irrValue in file_handler.brightnessDF.itertuples():
             nextValue = file_handler.single_value(key + 1)
-            for i in range(0,pm.timeStep/pm.rampUpStep, 1):
-                tempValue = irrValue + ((irrValue - nextValue) * i)/(pm.timeStep/pm.rampUpStep)
+            for i in range(0,pm.rampUpStep, 1):
+                tempValue = irrValue + ((irrValue - nextValue) * i)/pm.rampUpStep
                 led_control.set_brightness(tempValue)
                 msg.messages[msg.irrValue] = tempValue
                 #await asyncio.sleep(pm.timeStep/pm.rampUpStep)
