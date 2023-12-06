@@ -73,7 +73,7 @@ class BTconnect:
         for device in devices:
             #print("["+str(i)+"]"+str(dev[i]))
             if (str(device)[-len(pm.BTname):] == pm.BTname):
-                self.device = str(devvice)[:-(len(pm.BTname)+2)]
+                self.device = str(device)[:-(len(pm.BTname)+2)]
                 print('Device called {0} found with MAC {1}'.format(pm.BTname,self.device))
         if self.device == '':
             print('Device by the name of {0} could not be found'.format(pm.BTname))
