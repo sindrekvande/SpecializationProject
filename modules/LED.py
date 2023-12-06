@@ -75,6 +75,7 @@ async def LEDcoroutine(file_handler: file):
             # Wait for next value
             #await asyncio.sleep(pm.timeStep)
             await timer
+            spi.average_and_update()
             file_handler.append_to_file()
             msg.resetBTmessages()
         
