@@ -70,7 +70,7 @@ class BTconnect:
 
     async def scan(self):
         devices = await BleakScanner.discover()
-        for device in dev:
+        for device in devices:
             #print("["+str(i)+"]"+str(dev[i]))
             if (str(device)[-len(pm.BTname):] == pm.BTname):
                 self.device = str(devvice)[:-(len(pm.BTname)+2)]
