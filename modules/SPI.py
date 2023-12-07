@@ -34,24 +34,24 @@ class SPI:
         self.reset_adc()
 
         self.setup_spi(1000000, 0)
-        self.write_adc_register(0x011, 0b01100100, self.spi) #High Resolution Mode  
+        self.write_adc_internal_register(0x011, 0b01100100, self.spi) #High Resolution Mode  
         self.close_spi()
 
         self.setup_spi(1000000, 1)
-        self.write_adc_register(0x011, 0b01100100, self.spi) #High Resolution Mode  
+        self.write_adc_internal_register(0x011, 0b01100100, self.spi) #High Resolution Mode  
         self.close_spi()
 
         self.setup_spi(10000000, 0)
-        self.write_adc_register(0x013, 0b10010000, self.spi) #Set SD-output
+        self.write_adc_sigma_delta(0x013, 0b10010000, self.spi) #Set SD-output
         self.close_spi()
 
         self.setup_spi(10000000, 1)
-        self.write_adc_register(0x013, 0b10010000, self.spi) #Set SD-output
+        self.write_adc_sigma_delta(0x013, 0b10010000, self.spi) #Set SD-output
         self.close_spi()
 
         self.setup_spi(10000000, 0)
-        self.write_adc_register(0x012, 0b00001000, self.spi) #Synchronize ADCs
-        self.write_adc_register(0x012, 0b00001001, self.spi) #Synchronize ADCs
+        self.write_adc_sigma_delta(0x012, 0b00001000, self.spi) #Synchronize ADCs
+        self.write_adc_sigma_delta(0x012, 0b00001001, self.spi) #Synchronize ADCs
         self.close_spi()
 
         GPIO.add_event_detect(pinOut.ADC1_DRDY, GPIO.FALLING, callback=self.data_ready_callback)
@@ -98,8 +98,8 @@ class SPI:
             return None
         return [bin(resp[0]), bin(resp[1])]
         
-    def write_adc_register(self, address, value, spi):
-        """Write data to ADC register and verify."""
+    def write_adc_internal_register(self, address, value, spi):
+        """Write data to ADC register and verify, under internal register mode."""
         cmd = [address, value]
         spi.xfer2(cmd)
 
@@ -109,6 +109,11 @@ class SPI:
             print(f"Write mismatch! Expected {bin(value)} but got {readValue[1]} at address {hex(address)}. Header: {readValue[0]}")
         else:
             print(f"Write succesfull! {bin(value)} at address {hex(address)}.")
+
+    def write_adc_sigma_delta(self, address, value, spi):
+        """Write data to ADC register under sigma-delta mode."""
+        cmd = [address, value]
+        spi.xfer2(cmd)
 
     def output_value(self, response1, response2):
         for i in range(8):
