@@ -13,9 +13,9 @@ class BTconnect:
     async def create():
         self = BTconnect()
         await self.scan()
-        if self.device == '': exit()
-        self.client = BleakClient(self.device)
+        #if self.device == '': exit()
         try:
+            self.client = BleakClient(self.device)
             await self.client.connect()
             print(f"Connected: {self.client.is_connected}")
             paired = await self.client.pair(protection_level=2)
@@ -25,9 +25,9 @@ class BTconnect:
 
             #await self.waitForDevice()
         except:
-            print('Unpairing device to try again.')
-            self.unpairDevice()
-            self.__aenter__()
+            print('Device not available, storing MAC {0} for connection'.format(pm.BTmac))
+            self.device = pm.BTmac
+            self.serviceChar = pm.BTserviceUUID
             #print('Delete paired device on Pi, and/or erase+flash nRF')
         return self
 
