@@ -10,10 +10,10 @@ class BTconnect:
     perfomance = 0
     #testActive = True
 
-    async def create(self):
+    async def create():
         self = BTconnect()
         await self.scan()
-        if device == '': exit()
+        if self.device == '': exit()
         self.client = BleakClient(self.device)
         try:
             await self.client.connect()
@@ -64,7 +64,7 @@ class BTconnect:
                             #print('could not start notify')
     
     def callback(self, sender: BleakGATTCharacteristic, data: bytearray):
-        print(f"{sender}: {data[0]}")
+        #print(f"{sender}: {data[0]}")
         
         msg.messages[msg.btPackets] += len(data)
 
@@ -144,6 +144,6 @@ class BTconnect:
         p.sendline("quit")
         p.close()
 
-async def BTcoroutine(BT: BTconnect, testActive):
+async def BTcoroutine(BT: BTconnect):
     #async with BTconnect() as BT:
-    await BT.waitForDevice(testActive)
+    await BT.waitForDevice()
