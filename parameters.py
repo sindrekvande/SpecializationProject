@@ -9,6 +9,6 @@ column = 'Gg_pyr'
 BTmac = '45:D5:34:90:B8:26' #Nordic: 'E0:21:78:85:2A:FB'
 BTname = 'SoC BLE'
 BTservice = '180d'
-BTserviceUUID = '0x180D'
+BTserviceUUID = '0000180D-0000-1000-8000-00805F9B34FB'
 BTinterval = 2.0
 MaxLedWatt = 1000 # Max W/m^2 output of LED
