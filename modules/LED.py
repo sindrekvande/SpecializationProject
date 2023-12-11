@@ -28,7 +28,7 @@ class LED:
     def set_brightness_percent(self, percent): # programmed = measured: 50 = 50, 25 = 28, 75 = 73
         if percent >= 0 and percent <= 100:
             #self.pwm.ChangeDutyCycle(percent)
-            self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, percent)
+            self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, 255 * (percent/100))
             self.duty = percent
             msg.messages[msg.ledPercent] = percent
     
