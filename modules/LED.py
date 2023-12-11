@@ -84,4 +84,4 @@ async def LEDcoroutine(file_handler: file):
     spi.close_spi()
     GPIO.cleanup()
     # End the other corutines
-    msg.testActive = False
+    msg.messages[msg.testActive] = False

@@ -25,7 +25,7 @@ class BTconnect:
 
             #await self.waitForDevice()
         except:
-            print('Device not available, storing MAC {0} for connection'.format(pm.BTmac))
+            print('Device not available, using stored MAC {0} for connection'.format(pm.BTmac))
             self.device = pm.BTmac
             self.serviceChar = pm.BTserviceUUID
             #print('Delete paired device on Pi, and/or erase+flash nRF')
@@ -84,7 +84,7 @@ class BTconnect:
             print("Disconnected event")
             msg.messages[msg.btConnect] = 0
             disconnected_event.set()
-        while msg.testActive:
+        while msg.messages[msg.testActive]:
             try:
                 async with BleakClient(self.device, disconnected_callback=disconnected_callback) as client:
                     msg.messages[msg.btConnect] = 1
