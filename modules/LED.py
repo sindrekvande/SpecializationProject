@@ -14,35 +14,40 @@ import parameters as pm
 import messages as msg
 
 class LED:
-    freq = 10000 # measured as 870Hz, shouldn't affect the behaviour
+    freq = 1000 # measured as 870Hz, shouldn't affect the behaviour
     duty = 0
+    dutyRange = pm.MaxLedWatt*10
 
     def __init__(self, file):
         #self.get_values_from_file(file)
         self.pi = pigpio.pi()
         self.pi.set_mode(pinOut_lgpio.LED_DRV_DIM, pigpio.OUTPUT)
+        self.pi.set_PWM_range(pinOut_lgpio, self.dutyRange)
         self.pi.set_PWM_frequency(pinOut_lgpio.LED_DRV_DIM, self.freq)
 
         self.set_brightness_percent(0)
-
+    '''
     def set_brightness_percent(self, percent): # programmed = measured: 50 = 50, 25 = 28, 75 = 73
         if percent >= 0 and percent <= 100:
             #self.pwm.ChangeDutyCycle(percent)
-            self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, 255 * (percent/100))
+            self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, self.dutyRange * (percent/100))
             self.duty = percent
             msg.messages[msg.ledPercent] = percent
-    
+    '''
     def get_brightness_percent(self):
         return self.duty
 
     def calibrate():
         pass # do some sort of calibration with the pyranometer
 
-    def convert_watt_to_percent(self, watt): # 1000 W/m^2 -> 100% PWM
-        return ((watt / pm.MaxLedWatt) * 100)
+    #def convert_watt_to_percent(self, watt): # 1000 W/m^2 -> 100% PWM
+    #    return ((watt / pm.MaxLedWatt) * 100)
 
     def set_brightness(self, watt):
-        self.set_brightness_percent(self.convert_watt_to_percent(watt))
+        self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, watt)
+        self.duty = watt/pm.MaxLedWatt
+        msg.messages[msg.ledPercent] = self.duty
+        #self.set_brightness_percent(self.convert_watt_to_percent(watt))
 
 async def LEDcoroutine(file_handler: file):
     # Initialize LED
