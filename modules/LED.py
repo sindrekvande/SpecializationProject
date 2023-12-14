@@ -44,7 +44,7 @@ class LED:
     #    return ((watt / pm.MaxLedWatt) * 100)
 
     def set_brightness(self, watt):
-        self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, watt)
+        self.pi.set_PWM_dutycycle(pinOut_lgpio.LED_DRV_DIM, watt*10)
         self.duty = watt/pm.MaxLedWatt
         msg.messages[msg.ledPercent] = self.duty
         #self.set_brightness_percent(self.convert_watt_to_percent(watt))
