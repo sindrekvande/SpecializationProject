@@ -1,0 +1,11 @@
+# usage pip3 install -r requirements.txt
+
+matplotlib
+asyncio
+bleak
+pexpect
+time
+atimer
+pandas
+spidev
+smbus2
